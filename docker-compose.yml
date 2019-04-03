@@ -1,0 +1,16 @@
+version: "2"
+
+services:
+  python:
+    build:
+      context: .
+      dockerfile: dockerfile-manotes-api
+    ports:
+      - "80:80"
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres
+    ports:
+      - "5432:5432"
