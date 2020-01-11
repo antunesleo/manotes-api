@@ -1,1 +1,1 @@
-web: gunicorn --chdir app initialize:web_app
+web: gunicorn --chdir src initialize:web_app

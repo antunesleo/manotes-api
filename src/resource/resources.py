@@ -2,9 +2,9 @@ import re
 from functools import wraps
 from flask_restful import Resource
 from flask import g, Response, request
-from app import exceptions
-from app.security import authentication
-from app.store import reception
+from src import exceptions
+from src.security import authentication
+from src.store import reception
 
 
 def login_required(f):
@@ -161,11 +161,21 @@ class LoginResource(ResourceBase):
                 g.user = user
                 g.current_token = user.token
                 return {'result': 'OK'}, 200
-            return {'result': 'Not Authorized'}, 401
+            return {
+                'result': 'login-not-authorized',
+                'message': 'The user was not authorize because his credentials are invalid'
+            }, 401
         except exceptions.UserNotExists as ex:
-            return {'result': 'not-found', 'error': 'Resource Not Found'}, 404
+            return {
+                'result': 'user-from-login-not-found',
+                'message': 'Resource Not Found'
+            }, 404
+        # TODO: Essa excepton genérica não está bem testada
         except Exception as ex:
-            return {'result': 'Not Authorized'}, 401
+            return {
+                'result': 'unexpected-login-error',
+                'message': 'The user was not authorize because an unexpected error occurred on login'
+            }, 401
 
     @not_allowed
     def put(self):
@@ -225,6 +235,61 @@ class NoteResource(ResourceBase):
                 return self.return_not_mine(id=note_id)
             except Exception as ex:
                 return self.return_unexpected_error()
+
+
+class SharedNoteResource(ResourceBase):
+
+    def query(self):
+        return [self.response(shared_note) for shared_note in self.me.shared_notes]
+
+    @login_required
+    def get(self, note_id=None):
+        try:
+            if not note_id:
+                return self.query()
+        except Exception as ex:
+            return self.return_unexpected_error()
+
+    @not_allowed
+    def post(self, note_id):
+        pass
+
+    @not_allowed
+    def put(self, note_id):
+        pass
+
+    @not_allowed
+    def delete(self, note_id):
+        pass
+
+
+class NoteSharingResource(ResourceBase):
+
+    @not_allowed
+    def get(self, note_id):
+        pass
+
+    @login_required
+    def post(self, note_id):
+        try:
+            self.me.share_a_note(note_id, self.payload["user_id"])
+            return self.return_ok()
+        except exceptions.UserNotExists as ex:
+            return self.response({'result': 'not-found', 'error': 'Resource Not Found'}), 404
+        except exceptions.NoteNotFound as ex:
+            return self.return_not_found()
+        except exceptions.NoteNotMine as ex:
+            return self.return_not_mine()
+        except Exception as ex:
+            return self.return_unexpected_error()
+
+    @not_allowed
+    def put(self, note_id):
+        pass
+
+    @not_allowed
+    def delete(self, note_id):
+        pass
 
 
 class AvatarResource(ResourceBase):

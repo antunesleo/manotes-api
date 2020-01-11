@@ -1,7 +1,7 @@
 import os
 from tests import base
-from app import config
-from app import exceptions
+from src import config
+from src import exceptions
 
 
 class ConfigTest(base.TestCase):
@@ -172,12 +172,12 @@ class TestingConfigTest(base.TestCase):
 
 class GetConfigTest(base.TestCase):
 
-    @base.mock.patch('app.config.import_module')
+    @base.mock.patch('src.config.import_module')
     def test_should_call_import_module_to_import_config_module(self, import_module_mock):
         config.get_config()
         self.assertTrue(import_module_mock.called)
 
-    @base.mock.patch('app.config.import_module')
+    @base.mock.patch('src.config.import_module')
     def test_should_raise_config_class_not_found_if_config_class_is_none(self, import_module_mock):
         config_module_mock = self.mock.MagicMock()
         config_module_mock.TestingConfig = None
@@ -185,7 +185,7 @@ class GetConfigTest(base.TestCase):
         with self.assertRaises(exceptions.ConfigClassNotFound):
             config.get_config()
 
-    @base.mock.patch('app.config.import_module')
+    @base.mock.patch('src.config.import_module')
     def test_should_return_config_class_if_config_class(self, import_module_mock):
         config_module_mock = self.mock.MagicMock()
         testing_config_mock = self.mock.MagicMock()

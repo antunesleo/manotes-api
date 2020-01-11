@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 from flask import g
-from app import exceptions
-from app.security import security_services
+from src import exceptions
+from src.security import security_services
 
 
 class AuthService(object):
 
     @classmethod
     def authenticate_with_credentials(cls, credentials):
-        from app.house import residents
+        from src.house import residents
         username_or_email = credentials['username_or_email']
         try:
             if security_services.ValidationService.is_email(username_or_email):
@@ -22,7 +22,7 @@ class AuthService(object):
 
     @classmethod
     def authenticate_with_token(cls, token):
-        from app.house import residents
+        from src.house import residents
         try:
             user = residents.User.create_with_token(token)
             g.user = user

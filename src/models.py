@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime
-from app import config as config_module
-from app import database, exceptions
+from src import config as config_module
+from src import database, exceptions
 
 db = database.AppRepository.db
 
@@ -99,3 +99,14 @@ class Note(db.Model, AbstractModel):
     name = db.Column(db.String)
     content = db.Column(db.String)
     color = db.Column(db.String)
+    shared = db.Column(db.Boolean, default=False)
+
+
+class NoteSharing(db.Model, AbstractModel):
+    __tablename__ = 'manotes_sharing_note'
+    id = db.Column(db.Integer, primary_key=True)
+    giver_id = db.Column('giver_id', db.Integer, db.ForeignKey('manotes_users.id'), nullable=False)
+    user_id = db.Column('user_id', db.Integer, db.ForeignKey('manotes_users.id'), nullable=False)
+    note_id = db.Column('note_id', db.Integer, db.ForeignKey('manotes_notes.id'), nullable=False)
+    creation_date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    update_date = db.Column(db.DateTime)

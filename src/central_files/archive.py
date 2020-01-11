@@ -2,9 +2,9 @@ import shutil
 import os
 import secrets
 import boto3
-from app import config as config_module
-from app import exceptions
-from app.security import security_services
+from src import config as config_module
+from src import exceptions
+from src.security import security_services
 
 config = config_module.get_config()
 

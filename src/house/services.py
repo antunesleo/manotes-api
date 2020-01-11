@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-from app.base.services import Service
-from app.central_files import archive
-from app.house import residents
+from src.base.services import Service
+from src.central_files import archive
+from src.house import residents, sharing
 
 
 class NoteService(Service):
-    _entity = 'app.house.wall'
+    _entity = 'src.house.wall'
 
     @classmethod
     def create_new(cls, note):
@@ -39,3 +39,19 @@ class UserService(Service):
     @classmethod
     def create_new(cls, user):
         return residents.User.create_new(user)
+
+    @classmethod
+    def create_with_id(cls, user_id):
+        return residents.User.create_with_id(user_id)
+
+
+class NoteSharingService(Service):
+
+    @classmethod
+    def share_it_for_me(cls, giver_id, note_id, target_user_id):
+        sharing.NoteSharing.share(giver_id, note_id, target_user_id)
+
+    @classmethod
+    def list_it_for_user(cls, user_id):
+        notes_sharing = sharing.NoteSharing.list_for_user(user_id)
+        return notes_sharing

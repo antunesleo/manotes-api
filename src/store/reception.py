@@ -1,7 +1,7 @@
-from app import exceptions
-from app.async_tasks import tasks
-from app.house import services
-from app.security import security_services
+from src import exceptions
+from src.async_tasks import tasks
+from src.house import services
+from src.security import security_services
 
 
 class Clerk(object):

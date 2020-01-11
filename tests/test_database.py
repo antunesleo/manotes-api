@@ -1,5 +1,5 @@
 from tests import base
-from app import database
+from src import database
 
 
 class AppRepositoryTest(base.TestCase):

@@ -1,4 +1,4 @@
-from app import exceptions
+from src import exceptions
 
 
 class Entity(object):

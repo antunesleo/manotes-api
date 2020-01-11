@@ -3,8 +3,8 @@ import datetime
 from flask import Flask, g, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-from app import database, config as config_module
-from app.async_tasks import establish
+from src import database, config as config_module
+from src.async_tasks import establish
 
 
 config = config_module.get_config()
@@ -30,7 +30,7 @@ database.AppRepository.db = SQLAlchemy(web_app)
 
 @web_app.before_request
 def before_request():
-    from app.security import authentication
+    from src.security import authentication
     token = request.cookies.get('userToken')
     authentication.AuthService.authenticate_with_token(token)
 
@@ -48,10 +48,12 @@ def add_token_header(response):
 
 
 def create_api():
-    from app import api
+    from src import api
     api.create_api(web_app)
 
 
+create_api()
+
+
 def run():
-    create_api()
     web_app.run(host='127.0.0.1', port=int(config.PORT), debug=True, threaded=True)

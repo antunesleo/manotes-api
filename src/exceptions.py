@@ -44,3 +44,11 @@ class ConfigClassNotFound(Exception):
 
 class InvalidEmail(Exception):
     pass
+
+
+class NoteNotFound(Exception):
+    pass
+
+
+class NoteNotMine(Exception):
+    pass

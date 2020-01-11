@@ -1,7 +1,7 @@
 import datetime
-from app.house import services
-from app.base import domain
-from app import models, config as config_module
+from src.house import services
+from src.base import domain
+from src import models, config as config_module
 
 config = config_module.get_config()
 
@@ -13,12 +13,21 @@ class User(domain.Entity):
         super(User, self).__init__(db_instance)
         self.id = db_instance.id
         self._notes = None
+        self._shared_notes = None
 
     @property
     def notes(self):
         if self._notes is None:
             self._notes = services.NoteService.list_for_user(user_id=self.id)
         return self._notes
+
+    @property
+    def shared_notes(self):
+        if self._shared_notes is None:
+            notes_sharing = services.NoteSharingService.list_it_for_user(self.id)
+            self._shared_notes = [services.NoteService.create_for_user(note_sharing.user_id, note_sharing.note_id)
+                                  for note_sharing in notes_sharing]
+        return self._shared_notes
 
     @property
     def token(self):
@@ -86,6 +95,11 @@ class User(domain.Entity):
         image_path = services.FileService.save_avatar(temp_file_path, self.id)
         self.db_instance.avatar_path = image_path
         self.db_instance.save_db()
+
+    def share_a_note(self, note_id, user_id):
+        note = services.NoteService.create_for_user(note_id, self.id)
+        services.NoteSharingService.share_it_for_me(self.id, note.id, user_id)
+        note.mark_as_shared()
 
     def as_dict(self):
         return {

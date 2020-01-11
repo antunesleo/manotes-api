@@ -1,6 +1,6 @@
 from celery import Celery
 from celery.utils.log import get_task_logger
-from app import config as config_module
+from src import config as config_module
 
 config = config_module.get_config()
 
@@ -15,4 +15,4 @@ def make_worker(web_app):
 
 
 def register_tasks(worker):
-   from app.async_tasks import tasks
+   from src.async_tasks import tasks

@@ -1,5 +1,5 @@
-from app.async_tasks import establish
-from app.mail import postman
+from src.async_tasks import establish
+from src.mail import postman
 
 
 def start_send_email(name, from_address, to_address, subject):

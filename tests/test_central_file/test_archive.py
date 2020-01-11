@@ -1,27 +1,27 @@
 from tests import base
-from app import exceptions
-from app.central_files import archive
+from src import exceptions
+from src.central_files import archive
 
 
 class ScribeFactoryCreateWithEnvironmentTest(base.TestCase):
 
-    @base.mock.patch('app.central_files.archive.LocalScribe')
-    @base.mock.patch('app.central_files.archive.config')
+    @base.mock.patch('src.central_files.archive.LocalScribe')
+    @base.mock.patch('src.central_files.archive.config')
     def test_should_call_local_scribe_to_create_with_router_for_user_if_config_is_development(self, config_mock, local_scribe_mock):
         config_mock.PRODUCTION = None
         config_mock.DEVELOPMENT.return_value = self.mock.MagicMock()
         archive.ScribeFactory.create_with_environment(1, self.mock.MagicMock())
         self.assertTrue(local_scribe_mock.create_with_router_for_user.called)
 
-    @base.mock.patch('app.central_files.archive.S3Scribe')
-    @base.mock.patch('app.central_files.archive.config')
+    @base.mock.patch('src.central_files.archive.S3Scribe')
+    @base.mock.patch('src.central_files.archive.config')
     def test_should_call_s3_scribe_to_create_with_router_for_user_if_config_is_production(self, config_mock, s3_scribe_mock):
         config_mock.DEVELOPMENT = None
         config_mock.PRODUCTION.return_value = self.mock.MagicMock()
         archive.ScribeFactory.create_with_environment(1, self.mock.MagicMock())
         self.assertTrue(s3_scribe_mock.create_with_router_for_user.called)
 
-    @base.mock.patch('app.central_files.archive.config')
+    @base.mock.patch('src.central_files.archive.config')
     def test_should_raise_invalid_env_if_config_nether_development_or_production(self, config_mock):
         config_mock.DEVELOPMENT = None
         config_mock.PRODUCTION = None
@@ -70,7 +70,7 @@ class LocalScribeCreateWithRouterForUserTest(base.TestCase):
         with self.assertRaises(exceptions.InvalidRouter):
             archive.LocalScribe.create_with_router_for_user(1, 'asdf')
 
-    @base.mock.patch('app.central_files.archive.AvatarDirectoryRouter.create_for_user')
+    @base.mock.patch('src.central_files.archive.AvatarDirectoryRouter.create_for_user')
     def test_should_call_avatar_directory_router_to_create_for_user_if_router_is_avatar(self, create_for_user_mock):
         archive.LocalScribe.create_with_router_for_user(1, 'avatar')
         self.assertTrue(create_for_user_mock.called)
@@ -85,14 +85,14 @@ class LocalScribeSaveTest(base.TestCase):
     def setUp(self):
         self.local_scribe = archive.LocalScribe(1, self.mock.MagicMock(file_path='/some/path'))
 
-    @base.mock.patch('app.central_files.archive.shutil')
-    @base.mock.patch('app.central_files.archive.os')
+    @base.mock.patch('src.central_files.archive.shutil')
+    @base.mock.patch('src.central_files.archive.os')
     def test_should_call_os_to_check_if_path_exists(self, os_mock, shutil_mock):
         self.local_scribe.save(self.mock.MagicMock())
         self.assertTrue(os_mock.path.exists.called)
 
-    @base.mock.patch('app.central_files.archive.shutil')
-    @base.mock.patch('app.central_files.archive.os')
+    @base.mock.patch('src.central_files.archive.shutil')
+    @base.mock.patch('src.central_files.archive.os')
     def test_should_call_os_to_makedirs_if_path_dont_exists(self, os_mock, shutil_mock):
         path_mock = self.mock.MagicMock
         exists_mock = self.mock.MagicMock()
@@ -102,14 +102,14 @@ class LocalScribeSaveTest(base.TestCase):
         self.local_scribe.save(self.mock.MagicMock())
         self.assertTrue(os_mock.makedirs.called)
 
-    @base.mock.patch('app.central_files.archive.shutil')
-    @base.mock.patch('app.central_files.archive.os')
+    @base.mock.patch('src.central_files.archive.shutil')
+    @base.mock.patch('src.central_files.archive.os')
     def test_should_call_shutil_to_move_file_to_router_path(self, os_mock, shutil_mock):
         self.local_scribe.save(self.mock.MagicMock())
         self.assertTrue(shutil_mock.move.called)
 
-    @base.mock.patch('app.central_files.archive.shutil')
-    @base.mock.patch('app.central_files.archive.os')
+    @base.mock.patch('src.central_files.archive.shutil')
+    @base.mock.patch('src.central_files.archive.os')
     def test_should_return_router_file_path(self, os_mock, shutil_mock):
         result = self.local_scribe.save(self.mock.MagicMock())
         self.assertTrue(result, '/some/path')
@@ -132,11 +132,11 @@ class S3ScribeInit(base.TestCase):
 
 class S3ScribeCreateWithRouterForUserTest(base.TestCase):
 
-    @base.mock.patch('app.central_files.archive.config.S3_AWS_ACCESS_KEY_ID', 'AFDSFASDDFAS')
-    @base.mock.patch('app.central_files.archive.config.S3_AWS_SECRET_ACCESS_KEY', 'QERQEWE')
-    @base.mock.patch('app.central_files.archive.config.AVATAR_BUCKET_NAME', 'ZXCV')
-    @base.mock.patch('app.central_files.archive.AvatarDirectoryRouter.create_for_user', base.mock.MagicMock())
-    @base.mock.patch('app.central_files.archive.boto3')
+    @base.mock.patch('src.central_files.archive.config.S3_AWS_ACCESS_KEY_ID', 'AFDSFASDDFAS')
+    @base.mock.patch('src.central_files.archive.config.S3_AWS_SECRET_ACCESS_KEY', 'QERQEWE')
+    @base.mock.patch('src.central_files.archive.config.AVATAR_BUCKET_NAME', 'ZXCV')
+    @base.mock.patch('src.central_files.archive.AvatarDirectoryRouter.create_for_user', base.mock.MagicMock())
+    @base.mock.patch('src.central_files.archive.boto3')
     def test_should_get_call_boto3_to_instantiate_client(self, boto_3_mock):
         archive.S3Scribe.create_with_router_for_user(1, 'avatar')
         boto_3_mock.client.assert_called_with(
@@ -145,28 +145,28 @@ class S3ScribeCreateWithRouterForUserTest(base.TestCase):
             aws_secret_access_key='QERQEWE',
         )
 
-    @base.mock.patch('app.central_files.archive.config.S3_AWS_ACCESS_KEY_ID', 'AFDSFASDDFAS')
-    @base.mock.patch('app.central_files.archive.config.S3_AWS_SECRET_ACCESS_KEY', 'QERQEWE')
-    @base.mock.patch('app.central_files.archive.config.AVATAR_BUCKET_NAME', 'ZXCV')
-    @base.mock.patch('app.central_files.archive.boto3.client', base.mock.MagicMock())
+    @base.mock.patch('src.central_files.archive.config.S3_AWS_ACCESS_KEY_ID', 'AFDSFASDDFAS')
+    @base.mock.patch('src.central_files.archive.config.S3_AWS_SECRET_ACCESS_KEY', 'QERQEWE')
+    @base.mock.patch('src.central_files.archive.config.AVATAR_BUCKET_NAME', 'ZXCV')
+    @base.mock.patch('src.central_files.archive.boto3.client', base.mock.MagicMock())
     def test_should_raise_invalid_router_if_router_is_not_avatar(self):
         with self.assertRaises(exceptions.InvalidRouter):
             archive.S3Scribe.create_with_router_for_user(1, 'qwerty')
 
-    @base.mock.patch('app.central_files.archive.config.S3_AWS_ACCESS_KEY_ID', 'AFDSFASDDFAS')
-    @base.mock.patch('app.central_files.archive.config.S3_AWS_SECRET_ACCESS_KEY', 'QERQEWE')
-    @base.mock.patch('app.central_files.archive.config.AVATAR_BUCKET_NAME', 'ZXCV')
-    @base.mock.patch('app.central_files.archive.boto3.client', base.mock.MagicMock())
-    @base.mock.patch('app.central_files.archive.AvatarDirectoryRouter.create_for_user')
+    @base.mock.patch('src.central_files.archive.config.S3_AWS_ACCESS_KEY_ID', 'AFDSFASDDFAS')
+    @base.mock.patch('src.central_files.archive.config.S3_AWS_SECRET_ACCESS_KEY', 'QERQEWE')
+    @base.mock.patch('src.central_files.archive.config.AVATAR_BUCKET_NAME', 'ZXCV')
+    @base.mock.patch('src.central_files.archive.boto3.client', base.mock.MagicMock())
+    @base.mock.patch('src.central_files.archive.AvatarDirectoryRouter.create_for_user')
     def test_should_call_avatar_directory_router_to_create_for_user(self, create_for_user_mock):
         archive.S3Scribe.create_with_router_for_user(1, 'avatar')
         create_for_user_mock.assert_called_with(1)
 
-    @base.mock.patch('app.central_files.archive.config.S3_AWS_ACCESS_KEY_ID', 'AFDSFASDDFAS')
-    @base.mock.patch('app.central_files.archive.config.S3_AWS_SECRET_ACCESS_KEY', 'QERQEWE')
-    @base.mock.patch('app.central_files.archive.config.AVATAR_BUCKET_NAME', 'ZXCV')
-    @base.mock.patch('app.central_files.archive.boto3.client', base.mock.MagicMock())
-    @base.mock.patch('app.central_files.archive.AvatarDirectoryRouter.create_for_user', base.mock.MagicMock())
+    @base.mock.patch('src.central_files.archive.config.S3_AWS_ACCESS_KEY_ID', 'AFDSFASDDFAS')
+    @base.mock.patch('src.central_files.archive.config.S3_AWS_SECRET_ACCESS_KEY', 'QERQEWE')
+    @base.mock.patch('src.central_files.archive.config.AVATAR_BUCKET_NAME', 'ZXCV')
+    @base.mock.patch('src.central_files.archive.boto3.client', base.mock.MagicMock())
+    @base.mock.patch('src.central_files.archive.AvatarDirectoryRouter.create_for_user', base.mock.MagicMock())
     def test_should_return_instance(self):
         instance = archive.S3Scribe.create_with_router_for_user(1, 'avatar')
         self.assertIsInstance(instance, archive.S3Scribe)
@@ -259,25 +259,25 @@ class AvatarDirectoryRouterFileNameTest(base.TestCase):
 
 class AvatarDirectoryRouterCreateForUser(base.TestCase):
 
-    @base.mock.patch('app.central_files.archive.config.FILE_STORAGE_PATH', 'some/path')
-    @base.mock.patch('app.central_files.archive.config.AVATAR_BUCKET_NAME', 'somename')
-    @base.mock.patch('app.security.security_services.TokenService.generate')
+    @base.mock.patch('src.central_files.archive.config.FILE_STORAGE_PATH', 'some/path')
+    @base.mock.patch('src.central_files.archive.config.AVATAR_BUCKET_NAME', 'somename')
+    @base.mock.patch('src.security.security_services.TokenService.generate')
     def test_should_make_path_with_FILE_STORAGE_PATH_and_AVATAR_BUCKET_NAME(self, generate_mock):
         generate_mock.return_value = 'FSSDAGETEQE'
         avatar_directory_router = archive.AvatarDirectoryRouter.create_for_user(1)
         self.assertTrue(avatar_directory_router.path, 'some/path')
 
-    @base.mock.patch('app.central_files.archive.config.FILE_STORAGE_PATH', 'some/path')
-    @base.mock.patch('app.central_files.archive.config.AVATAR_BUCKET_NAME', 'somename')
-    @base.mock.patch('app.security.security_services.TokenService.generate')
+    @base.mock.patch('src.central_files.archive.config.FILE_STORAGE_PATH', 'some/path')
+    @base.mock.patch('src.central_files.archive.config.AVATAR_BUCKET_NAME', 'somename')
+    @base.mock.patch('src.security.security_services.TokenService.generate')
     def test_should_call_token_service_to_generate(self, generate_mock):
         generate_mock.return_value = 'FSSDAGETEQE'
         archive.AvatarDirectoryRouter.create_for_user(1)
         self.assertTrue(generate_mock.called)
 
-    @base.mock.patch('app.central_files.archive.config.FILE_STORAGE_PATH', 'some/path')
-    @base.mock.patch('app.central_files.archive.config.AVATAR_BUCKET_NAME', 'somename')
-    @base.mock.patch('app.security.security_services.TokenService.generate')
+    @base.mock.patch('src.central_files.archive.config.FILE_STORAGE_PATH', 'some/path')
+    @base.mock.patch('src.central_files.archive.config.AVATAR_BUCKET_NAME', 'somename')
+    @base.mock.patch('src.security.security_services.TokenService.generate')
     def test_should_return_instance(self, generate_mock):
         generate_mock.return_value = 'FSSDAGETEQE'
         avatar_directory_router = archive.AvatarDirectoryRouter.create_for_user(1)

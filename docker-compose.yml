@@ -17,6 +17,8 @@ services:
     depends_on:
       - postgres
       - redis
+    networks:
+      - manotes-backend-network
 
   postgres:
     container_name: manotes-db
@@ -51,7 +53,7 @@ services:
     env_file:
       - .env
     restart: unless-stopped
-    command: celery -A app.initialize.worker worker --loglevel=DEBUG
+    command: celery -A src.initialize.worker worker --loglevel=DEBUG
     depends_on:
       - redis
       - postgres
