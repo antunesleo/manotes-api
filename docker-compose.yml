@@ -1,16 +1,64 @@
 version: "2"
 
 services:
-  python:
+  web:
     build:
       context: .
       dockerfile: dockerfile-manotes-api
+    container_name: web
+    volumes:
+    - ./:/code
+    env_file:
+      - .env
+    restart: unless-stopped
+    command: python run.py
     ports:
       - "80:80"
     depends_on:
       - postgres
+      - redis
 
   postgres:
-    image: postgres
+    container_name: manotes-db
+    image: postgres:10.6
     ports:
       - "5432:5432"
+    environment:
+      - POSTGRES_USER=manotes
+      - POSTGRES_PASSWORD=manotes
+      - POSTGRES_DB=manotes
+    restart: unless-stopped
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    networks:
+      - manotes-backend-network
+
+  redis:
+    container_name: manotes-redis
+    image: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - manotes-backend-network
+
+  celery:
+    build:
+      context: .
+      dockerfile: dockerfile-manotes-api
+    container_name: celery
+    volumes:
+      - ./:/code
+    env_file:
+      - .env
+    restart: unless-stopped
+    command: celery -A app.initialize.worker worker --loglevel=DEBUG
+    depends_on:
+      - redis
+      - postgres
+    networks:
+      - manotes-backend-network
+
+
+networks:
+  manotes-backend-network:
+    driver: bridge
