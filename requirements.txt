@@ -10,5 +10,5 @@ passlib==1.7.1
 psycopg2==2.7.5
 python-coveralls==2.9.1
 sqlalchemy-utils==0.33.3
-redis==2.10.6
+redis==3.2
 validate_email==1.3
