@@ -173,7 +173,7 @@ $ docker-compose up -d
 
 ## Authors
 
-* **Leonardo Antunes** - *Initial work* - [antunesleo](https://github.com/PurpleBooth)
+* **Leonardo Antunes** - *Initial work* - [antunesleo](https://github.com/antunesleo)
 * **Pedro Pozzi Ferreira** - *Dockerization and Packages Update* - [PozziSan](https://github.com/PozziSan)
 
 
