@@ -7,8 +7,9 @@ A Python restful-api sample.
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
+If you prefer, you can also use Docker to get your copy running.
 
-### Prerequisites
+### Prerequisites - Local Installation
 
 * Linux
 * Python 3+
@@ -16,7 +17,12 @@ These instructions will get you a copy of the project up and running on your loc
 * Virtualenvwrapper (optional but recommended)
 * PostgreSQL 10+ 
 
-### Installing
+### Prerequisites - Docker
+
+* Docker CE
+* docker-compose
+
+### Installing - Local Installation
 
 Installing requirements
 ```
@@ -65,22 +71,71 @@ repo_token: <repo_token>
 service_name: manotes
 ```
 
-## Running the tests
+## Running the tests - Local Installation
 ```
 load-env-test
 python -m testtools.run
 ```
 
-## Updating testing-coverage
+## Updating testing-coverage - Local Installation
 ```
 coverage run --omit=<path_to_envs>/* -m testtools.run
 coveralls
 ```
 
-## Running API
+## Running API - Local Installation
 ```
 load-env
 python run.py
+```
+
+## Installing - Docker
+
+Preparing the Environment Variables
+
+```bash
+$ cp .env.sample.docker .env
+```
+
+You can also copy using your file browser, if you prefer.
+
+Change the default configurations, as **TEMP_FILE_PATH** or **TEMP_PATH** to your project home path.
+
+```bash
+$ docker-compose up --build -d
+```
+
+*This will also take your project running!*
+
+## Running the tests - Docker
+
+```bash
+$ docker-compose up -d
+$ docker-copose exec web bash
+```
+
+This will take you inside the Web Container Bash.
+
+```bash
+$ python -m testtools.run
+```
+
+## Updating The Coverage - Docker
+```bash
+$ docker-compose up -d
+$ docker-compose exec web bash
+```
+
+This will take you inside the Web Container Bash.
+
+```bash
+coverage run --omit=<path_to_envs>/* -m testtools.run
+coveralls
+```
+
+## Running API - Docker
+```bash
+$ docker-compose up -d
 ```
 
 ## Features
@@ -118,7 +173,9 @@ python run.py
 
 ## Authors
 
-* **Leonardo Antunes** - *Initial work* - [antunesleo](https://github.com/PurpleBooth)
+* **Leonardo Antunes** - *Initial work* - [antunesleo](https://github.com/antunesleo)
+* **Pedro Pozzi Ferreira** - *Dockerization and Packages Update* - [PozziSan](https://github.com/PozziSan)
+
 
 See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 
