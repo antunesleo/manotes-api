@@ -6,3 +6,5 @@
 .coverage
 htmlcov
 .coveralls.yml
+
+data
