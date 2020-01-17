@@ -103,7 +103,11 @@ Change the default configurations, as **TEMP_FILE_PATH** or **TEMP_PATH** to you
 
 ```bash
 $ docker-compose up --build -d
+$ docker-compose exec web bash
+# python manage.py db upgrade
 ```
+
+The last command will run the migrations
 
 *This will also take your project running!*
 
