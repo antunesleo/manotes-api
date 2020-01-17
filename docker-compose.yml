@@ -13,7 +13,7 @@ services:
     restart: unless-stopped
     command: python run.py
     ports:
-      - "80"
+      - "5324:5324"
     depends_on:
       - postgres
       - redis
@@ -24,7 +24,7 @@ services:
     container_name: manotes-db
     image: postgres:10.6
     ports:
-      - "5432"
+      - "5432:5432"
     environment:
       - POSTGRES_USER=manotes
       - POSTGRES_PASSWORD=manotes
@@ -39,7 +39,7 @@ services:
     container_name: manotes-redis
     image: redis
     ports:
-      - "6379"
+      - "6379:6379"
     networks:
       - manotes-backend-network
 

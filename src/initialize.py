@@ -57,4 +57,4 @@ create_api()
 
 
 def run():
-    web_app.run(host='127.0.0.1', port=int(config.PORT), debug=True, threaded=True)
+    web_app.run(host=str(config.APP_BASE_URL), port=int(config.PORT), debug=True, threaded=True)
