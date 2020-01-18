@@ -4,10 +4,10 @@ from src.resource import resources
 
 def create_api(app):
     api = Api(app)
-    api.add_resource(resources.NoteResource, '/api/notes', '/api/notes/<int:note_id>')
-    api.add_resource(resources.SharedNoteResource, '/api/shared_notes', '/api/shared_notes/<int:note_id>')
-    api.add_resource(resources.NoteSharingResource, '/api/me/notes/<int:note_id>/share')
-    api.add_resource(resources.AccountResource, '/api/account')
+    api.add_resource(resources.NoteResource, '/api/users/me/notes', '/api/users/me/notes/<int:note_id>')
+    api.add_resource(resources.SharedNoteResource, '/api/users/me/shared_notes', '/api/users/me/shared_notes/<int:note_id>')
+    api.add_resource(resources.NoteSharingResource, '/api/users/me/notes/<int:note_id>/share')
+    api.add_resource(resources.UserResource, '/api/users')
     api.add_resource(resources.LoginResource, '/api/login')
-    api.add_resource(resources.AvatarResource, '/api/account/avatar')
+    api.add_resource(resources.AvatarResource, '/api/users/me/avatar')
     api.add_resource(resources.HealthCheckResource, '/api/healthcheck')

@@ -17,7 +17,7 @@ class CreateApiTest(base.TestCase):
         api_instance_mock = self.mock.MagicMock()
         api_mock.return_value = api_instance_mock
         api.create_api(self.app_mock)
-        self.assertTrue(any(mock_call == base.call(api.resources.NoteResource, '/api/notes', '/api/notes/<int:note_id>')
+        self.assertTrue(any(mock_call == base.call(api.resources.NoteResource, '/api/users/me/notes', '/api/users/me/notes/<int:note_id>')
                             for mock_call in api_instance_mock.add_resource.mock_calls))
 
     @base.mock.patch('src.api.Api')
@@ -25,15 +25,15 @@ class CreateApiTest(base.TestCase):
         api_instance_mock = self.mock.MagicMock()
         api_mock.return_value = api_instance_mock
         api.create_api(self.app_mock)
-        self.assertTrue(any(mock_call == base.call(api.resources.SharedNoteResource, '/api/shared_notes', '/api/shared_notes/<int:note_id>')
+        self.assertTrue(any(mock_call == base.call(api.resources.SharedNoteResource, '/api/users/me/shared_notes', '/api/users/me/shared_notes/<int:note_id>')
                             for mock_call in api_instance_mock.add_resource.mock_calls))
 
     @base.mock.patch('src.api.Api')
-    def test_should_add_AccountResource(self, api_mock):
+    def test_should_add_UserResource(self, api_mock):
         api_instance_mock = self.mock.MagicMock()
         api_mock.return_value = api_instance_mock
         api.create_api(self.app_mock)
-        self.assertTrue(any(mock_call == base.call(api.resources.AccountResource, '/api/account')
+        self.assertTrue(any(mock_call == base.call(api.resources.UserResource, '/api/users')
                             for mock_call in api_instance_mock.add_resource.mock_calls))
 
     @base.mock.patch('src.api.Api')
@@ -49,7 +49,7 @@ class CreateApiTest(base.TestCase):
         api_instance_mock = self.mock.MagicMock()
         api_mock.return_value = api_instance_mock
         api.create_api(self.app_mock)
-        self.assertTrue(any(mock_call == base.call(api.resources.AvatarResource, '/api/account/avatar')
+        self.assertTrue(any(mock_call == base.call(api.resources.AvatarResource, '/api/users/me/avatar')
                             for mock_call in api_instance_mock.add_resource.mock_calls))
 
     @base.mock.patch('src.api.Api')

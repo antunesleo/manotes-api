@@ -111,7 +111,7 @@ class ResourceBase(Resource):
         return result, 405
 
 
-class AccountResource(ResourceBase):
+class UserResource(ResourceBase):
 
     @not_allowed
     def get(self):
