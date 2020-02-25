@@ -14,18 +14,6 @@ establish.make_worker(web_app)
 worker = establish.worker
 establish.register_tasks(worker)
 
-if config == config_module.DevelopmentConfig:
-    from flask_cors import CORS
-    CORS(
-        web_app, origins="*",
-        allow_headers=[
-            "Content-Type",
-            "Authorization",
-            "Access-Control-Allow-Credentials"
-        ],
-        supports_credentials=True
-    )
-
 database.AppRepository.db = SQLAlchemy(web_app)
 
 

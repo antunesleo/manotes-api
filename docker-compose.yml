@@ -13,7 +13,7 @@ services:
     restart: unless-stopped
     command: >
         bash -c "python manage.py db upgrade &&
-        python run.py"
+        flask run"
     ports:
       - "5324:5324"
     depends_on:
