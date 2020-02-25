@@ -30,7 +30,7 @@ class AuthServiceAuthenticateWithCredentialsTest(base.TestCase):
         create_with_username_mock.assert_called_with('breno')
 
     @base.mock.patch('src.security.security_services.HashService.is_string_equals_to_hash', base.mock.MagicMock())
-    @base.mock.patch('src.house.residents.User.create_with_username', base.mock.MagicMock(side_effect=exceptions.NotFound))
+    @base.mock.patch('src.house.residents.User.create_with_email', base.mock.MagicMock(side_effect=exceptions.NotFound))
     @base.mock.patch('src.security.security_services.ValidationService.is_email')
     def test_should_raise_user_not_exists_if_not_found_raised_on_create_with_username(self, is_email_mock):
         is_email_mock.return_value = True
