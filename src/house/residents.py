@@ -67,9 +67,11 @@ class User(domain.Entity):
         car = cls.repository.create_from_dict(user)
         return cls.create_with_instance(car)
 
-    def create_a_note(self, note):
-        note['user_id'] = self.id
-        return services.NoteService.create_new(note)
+    def create_a_note(self, note_dict):
+        note_dict['user_id'] = self.id
+        note_factory = services.NoteService.pass_me_the_factory()
+        note = note_factory.create_new(note_dict)
+        return note.as_dict()
 
     def delete_a_note(self, id):
         note = services.NoteService.create_for_user(id, self.id)

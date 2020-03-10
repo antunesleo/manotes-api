@@ -243,21 +243,43 @@ class UserGetANoteTest(base.TestCase):
         self.assertTrue(note_service_mock.create_for_user.called)
 
 
+@base.TestCase.mock.patch('src.house.services.NoteService.pass_me_the_factory')
 class UserCreateANoteTest(base.TestCase):
 
-    @base.TestCase.mock.patch('src.house.services.NoteService')
-    def test_should_call_services_to_create_new(self, note_service_mock):
+    def test_should_create_a_note(self, pass_me_the_factory_mock):
+        note_mock = self.mock.MagicMock()
+        pass_me_the_factory_mock.return_value = note_mock
         db_instance = self.mock.MagicMock()
         db_instance.id = 1
-        note = {
+        note_dict = {
             'id': '1',
             'name': 'this is a note',
             'content': 'This is a note',
             'color': '#FFFFFF'
         }
         user = residents.User(db_instance=db_instance)
-        user.create_a_note(note)
-        self.assertTrue(note_service_mock.create_new.called)
+        user.create_a_note(note_dict)
+        self.assertTrue(pass_me_the_factory_mock.called)
+        note_mock.create_new.assert_called_with(note_dict)
+
+    def test_should_return_created_note(self, pass_me_the_factory_mock):
+        note_dict_mock = self.mock.MagicMock()
+        note_mock = self.mock.MagicMock()
+        note_mock.as_dict.return_value = note_dict_mock
+        note_class_mock = self.mock.MagicMock()
+        note_class_mock.create_new.return_value = note_mock
+        pass_me_the_factory_mock.return_value = note_class_mock
+        db_instance = self.mock.MagicMock()
+        db_instance.id = 1
+        note_dict = {
+            'id': '1',
+            'name': 'this is a note',
+            'content': 'This is a note',
+            'color': '#FFFFFF'
+        }
+        user = residents.User(db_instance=db_instance)
+        note_dict = user.create_a_note(note_dict)
+        self.assertEqual(note_dict_mock, note_dict)
 
 
 class UpdateANoteTest(base.TestCase):

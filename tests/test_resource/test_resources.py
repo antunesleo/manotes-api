@@ -871,8 +871,7 @@ class NoteResourceGetTest(base.TestCase):
     def test_should_return_note(self, logged_user_mock, g_mock):
         g_mock = self.mock.MagicMock()
         g_mock.authenticated.return_value = True
-        note_mock = self.mock.MagicMock()
-        note_mock.as_dict.return_value = {'id': 1}
+        note_mock = {'id': 1}
         logged_user_mock.get_a_note.return_value = note_mock
         note_resource = resources.NoteResource()
         response = note_resource.get(1)

@@ -198,8 +198,8 @@ class NoteResource(ResourceBase):
                 return self.query()
 
             try:
-                note = self.me.get_a_note(note_id)
-                return self.response(note.as_dict())
+                note_dict = self.me.get_a_note(note_id)
+                return self.response(note_dict)
             except exceptions.NotFound as ex:
                 return self.return_not_found(id=note_id)
             except exceptions.NotMine as ex:

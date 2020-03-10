@@ -33,6 +33,14 @@ class NoteServiceListForUserTest(base.TestCase):
         self.assertTrue(isinstance(notes, list))
 
 
+@base.TestCase.mock.patch('src.house.wall.Note')
+class NoteServicePassTheNote(base.TestCase):
+
+    def test_should_pass_me_the_factory(self, note_mock):
+        note = services.NoteService.pass_me_the_factory()
+        self.assertEqual(note, note_mock)
+
+
 class FileServiceSaveAvatarTest(base.TestCase):
 
     @base.TestCase.mock.patch('src.house.services.archive.ScribeFactory')

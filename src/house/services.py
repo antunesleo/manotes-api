@@ -20,10 +20,8 @@ class NoteService(Service):
         return cls.entity.Note.create_for_user(id, user_id)
 
     @classmethod
-    def update_by_id(cls, id, changed_note, user_id):
-        note = cls.entity.Note.create_for_user(id, user_id)
-        note.update(changed_note)
-        return note
+    def pass_me_the_factory(cls):
+        return cls.entity.Note
 
 
 class FileService(Service):
