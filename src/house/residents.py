@@ -83,7 +83,7 @@ class User(domain.Entity):
     def update_a_note(self, id, note_changes):
         note = services.NoteService.create_for_user(id, self.id)
         note.update(note_changes)
-        return note
+        return note.as_dict()
 
     def update(self, payload):
         payload.pop('password', None)

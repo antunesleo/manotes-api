@@ -2,6 +2,16 @@ from tests import base
 from src.house import services
 
 
+@base.TestCase.mock.patch('src.store.reception.Clerk')
+class ClerkServiceCreate(base.TestCase):
+
+    def test_should_create(self, clerk_class_mock):
+        clerk_mock = self.mock.MagicMock()
+        clerk_class_mock.create.return_value = clerk_mock
+        created_clerk = services.ClerkService.create()
+        self.assertEqual(created_clerk, clerk_mock)
+
+
 class NoteServiceCreateNewTest(base.TestCase):
 
     @base.TestCase.mock.patch('src.house.wall.Note')
@@ -34,7 +44,7 @@ class NoteServiceListForUserTest(base.TestCase):
 
 
 @base.TestCase.mock.patch('src.house.wall.Note')
-class NoteServicePassTheNote(base.TestCase):
+class NoteServicePassTheFactory(base.TestCase):
 
     def test_should_pass_me_the_factory(self, note_mock):
         note = services.NoteService.pass_me_the_factory()
@@ -87,3 +97,11 @@ class NoteSharingServiceListForUser(base.TestCase):
         list_for_user_mock.return_value = []
         notes_sharing = services.NoteSharingService.list_it_for_user(1)
         self.assertEqual(notes_sharing, [])
+
+
+@base.TestCase.mock.patch('src.house.residents.User')
+class UserServicePassMeTheFactory(base.TestCase):
+
+    def test_should_pass_me_the_factory(self, note_mock):
+        user_factory = services.UserService.pass_me_the_factory()
+        self.assertEqual(user_factory, note_mock)
