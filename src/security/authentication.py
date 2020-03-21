@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 from flask import g
 from src import exceptions
+from src.base.services import DomainService
 from src.security import security_services
 
 
-class AuthService(object):
+class AuthService(DomainService):
 
     @classmethod
     def authenticate_with_credentials(cls, credentials):

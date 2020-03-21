@@ -18,14 +18,14 @@ class User(domain.Entity):
     @property
     def notes(self):
         if self._notes is None:
-            self._notes = services.NoteService.list_for_user(user_id=self.id)
+            self._notes = services.WallService.list_note_for_user(user_id=self.id)
         return self._notes
 
     @property
     def shared_notes(self):
         if self._shared_notes is None:
-            notes_sharing = services.NoteSharingService.list_it_for_user(self.id)
-            self._shared_notes = [services.NoteService.create_for_user(note_sharing.user_id, note_sharing.note_id)
+            notes_sharing = services.SharingService.list_note_sharing_for_user(self.id)
+            self._shared_notes = [services.WallService.create_note_for_user(note_sharing.user_id, note_sharing.note_id)
                                   for note_sharing in notes_sharing]
         return self._shared_notes
 
@@ -69,19 +69,19 @@ class User(domain.Entity):
 
     def create_a_note(self, note_dict):
         note_dict['user_id'] = self.id
-        note_factory = services.NoteService.pass_me_the_factory()
+        note_factory = services.WallService.pass_me_the_note_factory()
         note = note_factory.create_new(note_dict)
         return note.as_dict()
 
     def delete_a_note(self, id):
-        note = services.NoteService.create_for_user(id, self.id)
+        note = services.WallService.create_note_for_user(id, self.id)
         note.delete()
 
     def get_a_note(self, id):
-        return services.NoteService.create_for_user(id, self.id)
+        return services.WallService.create_note_for_user(id, self.id)
 
     def update_a_note(self, id, note_changes):
-        note = services.NoteService.create_for_user(id, self.id)
+        note = services.WallService.create_note_for_user(id, self.id)
         note.update(note_changes)
         return note.as_dict()
 
@@ -99,8 +99,8 @@ class User(domain.Entity):
         self.db_instance.save_db()
 
     def share_a_note(self, note_id, user_id):
-        note = services.NoteService.create_for_user(note_id, self.id)
-        services.NoteSharingService.share_it_for_me(self.id, note.id, user_id)
+        note = services.WallService.create_note_for_user(note_id, self.id)
+        services.SharingService.share_note_for_me(self.id, note.id, user_id)
         note.mark_as_shared()
 
     def as_dict(self):

@@ -31,7 +31,7 @@ class ResourceBaseMeTest(base.TestCase):
 
 class ResourceBaseClerkTest(base.TestCase):
 
-    @base.mock.patch('src.house.services.ClerkService.create')
+    @base.mock.patch('src.house.services.ReceptionService.create_clerk')
     def test_should_return_reception_clerk(self, create_mock):
         clerk_mock = self.mock.MagicMock()
         create_mock.return_value = clerk_mock

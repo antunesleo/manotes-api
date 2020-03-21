@@ -18,12 +18,12 @@ class NoteSharing(domain.Entity):
     @classmethod
     def share(cls, giver_id, note_id, user_id):
         try:
-            services.UserService.create_with_id(user_id)
+            services.ResidentsService.create_user_with_id(user_id)
         except exceptions.NotFound:
             raise exceptions.UserNotExists('Could not share note {} because the user {} does not exists'.format(user_id, note_id))
 
         try:
-            services.NoteService.create_for_user(note_id, giver_id)
+            services.WallService.create_note_for_user(note_id, giver_id)
         except exceptions.NotFound:
             raise exceptions.NoteNotFound('Could not share note {} because it was not found')
         except exceptions.NotMine:

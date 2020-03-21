@@ -4,7 +4,7 @@ from flask_restful import Resource
 from flask import g, Response, request
 from src import exceptions
 from src.security import authentication
-from src.house.services import ClerkService
+from src.house.services import ReceptionService
 
 
 
@@ -47,7 +47,7 @@ class ResourceBase(Resource):
     @property
     def clerk(self):
         if self._clerk is None:
-            self._clerk = ClerkService.create()
+            self._clerk = ReceptionService.create_clerk()
         return self._clerk
 
     @property
