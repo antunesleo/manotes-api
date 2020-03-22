@@ -30,8 +30,10 @@ class DIPService(object):
 
 
 class DomainService(object):
-    pass
 
+    @classmethod
+    def create(cls):
+        return cls()
 
 class InfraService(object):
     pass
