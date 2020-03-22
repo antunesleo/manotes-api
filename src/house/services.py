@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-from src.base.services import DIPService, InfraService
-from src.central_files import archive
+from src.base.services import DIPService
 
 
 class ReceptionService(DIPService):
@@ -13,14 +12,6 @@ class ReceptionService(DIPService):
 
 class WallService(DIPService):
     _module = 'src.house.wall'
-
-    @classmethod
-    def create_new_note(cls, note):
-        return cls.module.Note.create_new(note)
-
-    @classmethod
-    def list_note_for_user(cls, user_id):
-        return cls.module.Note.list_for_user(user_id)
 
     @classmethod
     def create_note_for_user(cls, id, user_id):
@@ -39,10 +30,6 @@ class ResidentsService(DIPService):
         return cls.module.User
 
     @classmethod
-    def create_new_user(cls, user):
-        return cls.module.User.create_new(user)
-
-    @classmethod
     def create_user_with_id(cls, user_id):
         return cls.module.User.create_with_id(user_id)
 
@@ -51,18 +38,5 @@ class SharingService(DIPService):
     _module = 'src.house.sharing'
 
     @classmethod
-    def share_note_for_me(cls, giver_id, note_id, target_user_id):
-        cls.module.NoteSharing.share(giver_id, note_id, target_user_id)
-
-    @classmethod
-    def list_note_sharing_for_user(cls, user_id):
-        notes_sharing = cls.module.NoteSharing.list_for_user(user_id)
-        return notes_sharing
-
-
-class FileService(InfraService):
-
-    @classmethod
-    def save_avatar(cls, temp_file_path, user_id):
-        file = archive.ScribeFactory.create_with_environment(user_id, router='avatar')
-        return file.save(temp_file_path)
+    def pass_me_the_note_sharing_factory(cls):
+        return cls.module.NoteSharing

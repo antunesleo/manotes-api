@@ -199,7 +199,6 @@ class NoteResource(ResourceBase):
         def get(self, note_id=None):
             if note_id is None:
                 return self.query()
-
             try:
                 note_dict = self.me.get_a_note(note_id)
                 return self.response(note_dict)
