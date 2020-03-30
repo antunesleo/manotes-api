@@ -25,13 +25,13 @@ class UserNotesTest(base.TestCase):
     @base.TestCase.mock.patch('src.house.residents.WallService')
     def test_should_call_service_if_not_cached(self, wall_service_mock):
         note_factory_mock = self.mock.MagicMock()
-        note_factory_mock.list_note_for_user.return_value = []
+        note_factory_mock.list_for_user.return_value = []
         wall_service_mock.pass_me_the_note_factory.return_value = note_factory_mock
         db_instance = self.mock.MagicMock()
         db_instance.id = 1
         user = residents.User(db_instance=db_instance)
         notes = user.notes
-        self.assertTrue(note_factory_mock.list_note_for_user.called)
+        self.assertTrue(note_factory_mock.list_for_user.called)
         self.assertEqual(notes, [])
 
     @base.TestCase.mock.patch('src.house.residents.WallService')

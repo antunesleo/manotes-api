@@ -20,7 +20,7 @@ class User(domain.Entity):
     def notes(self):
         if self._notes is None:
             note_factory = WallService.pass_me_the_note_factory()
-            self._notes = note_factory.list_note_for_user(user_id=self.id)
+            self._notes = note_factory.list_for_user(user_id=self.id)
         return self._notes
 
     @property
