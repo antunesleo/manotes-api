@@ -38,3 +38,7 @@ class EncodingService(InfraService):
     @classmethod
     def encode(cls, dict_to_encode, secret):
         return jwt.encode(dict_to_encode, secret, algorithm='HS256')
+
+    @classmethod
+    def decode(cls, dict_to_decode, secret):
+        return jwt.decode(dict_to_decode, secret, algorithm='HS256')
