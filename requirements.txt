@@ -16,3 +16,4 @@ gevent==1.4.0
 celery[redis]
 kombu==4.6.6
 fabric==2.4.0
+pyjwt==1.7.1

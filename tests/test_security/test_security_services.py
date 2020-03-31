@@ -65,3 +65,14 @@ class ValidationServiceTest(base.TestCase):
         validate_email_mock.return_value = True
         is_valid = security_services.ValidationService.is_email('breno@breno.com')
         self.assertIsInstance(is_valid, bool)
+
+
+@base.mock.patch('src.security.security_services.jwt')
+class EncodingServiceEncodeTest(base.TestCase):
+
+    def test_should_encode(self, jwt_mock):
+        encoded_mock = self.mock.MagicMock()
+        jwt_mock.encode.return_value = encoded_mock
+        some_dict = {'some': 'dict'}
+        encoded = security_services.EncodingService.encode(some_dict, 'secret')
+        self.assertEqual(encoded, encoded_mock )

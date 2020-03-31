@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 import secrets
+
+import jwt
+
 from src.base.services import InfraService
 from passlib.hash import pbkdf2_sha256
 from validate_email import validate_email
@@ -28,3 +31,10 @@ class ValidationService(InfraService):
     @classmethod
     def is_email(cls, email):
         return validate_email(email)
+
+
+class EncodingService(InfraService):
+
+    @classmethod
+    def encode(cls, dict_to_encode, secret):
+        return jwt.encode(dict_to_encode, secret, algorithm='HS256')
