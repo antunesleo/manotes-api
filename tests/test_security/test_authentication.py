@@ -81,12 +81,12 @@ class AuthServiceAuthenticateWithCredentialsTest(base.TestCase):
         self.assertEqual(user, user_mock)
 
 
-class AuthServiceAuthenticateWithTokenTest(base.TestCase):
+class AuthServiceCheckAuthorizationTest(base.TestCase):
 
     @base.mock.patch('src.security.authentication.g', base.mock.MagicMock())
     @base.mock.patch('src.house.residents.User.create_with_token')
     def test_should_call_create_with_token(self, create_with_token_mock):
-        authentication.AuthService.authenticate_with_token('HAUHIAKJA')
+        authentication.AuthService.check_authorization('HAUHIAKJA')
         create_with_token_mock.assert_called_with('HAUHIAKJA')
 
     @base.mock.patch('src.security.authentication.g')
@@ -94,7 +94,7 @@ class AuthServiceAuthenticateWithTokenTest(base.TestCase):
     def test_should_set_user_on_g_if_not_found_not_raised(self, create_with_token_mock, g_mock):
         user_mock = self.mock.MagicMock(token='HAIUHIUAAK')
         create_with_token_mock.return_value = user_mock
-        authentication.AuthService.authenticate_with_token('HAUHIAKJA')
+        authentication.AuthService.check_authorization('HAUHIAKJA')
         self.assertEqual(user_mock, g_mock.user)
 
     @base.mock.patch('src.security.authentication.g')
@@ -102,7 +102,7 @@ class AuthServiceAuthenticateWithTokenTest(base.TestCase):
     def test_should_set_current_token_on_if_not_found_not_raised(self, create_with_token_mock, g_mock):
         user_mock = self.mock.MagicMock(token='HAIUHIUAAK')
         create_with_token_mock.return_value = user_mock
-        authentication.AuthService.authenticate_with_token('HAUHIAKJA')
+        authentication.AuthService.check_authorization('HAUHIAKJA')
         self.assertEqual(user_mock.token, g_mock.current_token)
 
     @base.mock.patch('src.security.authentication.g', base.mock.MagicMock())
@@ -110,11 +110,11 @@ class AuthServiceAuthenticateWithTokenTest(base.TestCase):
     def test_should_set_authenticated_true_on_g_if_not_found_not_raised(self, create_with_token_mock):
         user_mock = self.mock.MagicMock(token='HAIUHIUAAK')
         create_with_token_mock.return_value = user_mock
-        authentication.AuthService.authenticate_with_token('HAUHIAKJA')
+        authentication.AuthService.check_authorization('HAUHIAKJA')
         self.assertTrue(user_mock.authenticated)
 
     @base.mock.patch('src.house.residents.User.create_with_token', base.mock.MagicMock(side_effect=exceptions.NotFound))
     @base.mock.patch('src.security.authentication.g')
     def test_should_set_authenticated_false_on_g_if_not_found_raised(self, g_mock):
-        authentication.AuthService.authenticate_with_token('HAUHIAKJA')
+        authentication.AuthService.check_authorization('HAUHIAKJA')
         self.assertFalse(g_mock.authenticated)

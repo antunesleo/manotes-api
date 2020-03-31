@@ -19,11 +19,10 @@ class AuthService(DomainService):
                 user = user_factory.create_with_username(username_or_email)
         except exceptions.NotFound:
             raise exceptions.UserNotExists('Could not find a user with username {}'.format(username_or_email))
-
         return security_services.HashService.is_string_equals_to_hash(credentials['password'], user.password), user
 
     @classmethod
-    def authenticate_with_token(cls, token):
+    def check_authorization(cls, token):
         from src.house import residents
         try:
             user = residents.User.create_with_token(token)
