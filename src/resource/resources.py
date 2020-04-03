@@ -4,7 +4,8 @@ from flask_restful import Resource
 from flask import g, Response, request
 from src import exceptions
 from src.security import authentication
-from src.store import reception
+from src.house.services import ReceptionService
+
 
 
 def login_required(f):
@@ -45,7 +46,9 @@ class ResourceBase(Resource):
 
     @property
     def clerk(self):
-        return reception.Clerk
+        if self._clerk is None:
+            self._clerk = ReceptionService.create_clerk()
+        return self._clerk
 
     @property
     def payload(self):
@@ -119,8 +122,8 @@ class UserResource(ResourceBase):
 
     def post(self):
         try:
-            user = self.clerk.create_user_account(self.payload)
-            return self.response(user.as_dict())
+            user_dict = self.clerk.create_user_account(self.payload)
+            return self.response(user_dict)
         except exceptions.EmailAlreadyExists as ex:
             return {'result': 'email-already-exists', 'error': 'The resource was not created because the email already exists'}, 400
         except exceptions.UsernameAlreadyExists as ex:
@@ -158,9 +161,9 @@ class LoginResource(ResourceBase):
         try:
             authenticated, user = self.auth_service.authenticate_with_credentials(self.payload)
             if authenticated:
-                g.user = user
-                g.current_token = user.token
-                return {'result': 'OK'}, 200
+                    g.user = user
+                    g.current_token = user.token
+                    return {'result': 'OK'}, 200
             return {
                 'result': 'login-not-authorized',
                 'message': 'The user was not authorize because his credentials are invalid'
@@ -196,10 +199,9 @@ class NoteResource(ResourceBase):
         def get(self, note_id=None):
             if note_id is None:
                 return self.query()
-
             try:
-                note = self.me.get_a_note(note_id)
-                return self.response(note.as_dict())
+                note_dict = self.me.get_a_note(note_id)
+                return self.response(note_dict)
             except exceptions.NotFound as ex:
                 return self.return_not_found(id=note_id)
             except exceptions.NotMine as ex:
@@ -215,8 +217,8 @@ class NoteResource(ResourceBase):
         @login_required
         def put(self, note_id):
             try:
-                note = self.me.update_a_note(note_id, self.payload)
-                return self.response(note.as_dict())
+                note_dict = self.me.update_a_note(note_id, self.payload)
+                return self.response(note_dict)
             except exceptions.NotFound as ex:
                 return self.return_not_found(id=note_id)
             except exceptions.NotMine as ex:

@@ -13,17 +13,27 @@ def classproperty(func):
     return ClassProperty(func)
 
 
-class Service(object):
-    _entity = None
+class DIPService(object):
+    _module = None
 
     class InvalidDomain(Exception):
         pass
 
     @classproperty
-    def entity(cls):
-        if cls._entity is None:
+    def module(cls):
+        if cls._module is None:
             raise cls.InvalidDomain('You should use a specific service implementation')
         try:
-            return import_module(cls._entity)
+            return import_module(cls._module)
         except Exception as ex:
             pass
+
+
+class DomainService(object):
+
+    @classmethod
+    def create(cls):
+        return cls()
+
+class InfraService(object):
+    pass

@@ -31,8 +31,10 @@ class ResourceBaseMeTest(base.TestCase):
 
 class ResourceBaseClerkTest(base.TestCase):
 
-    @base.mock.patch('src.resource.resources.reception.Clerk')
-    def test_should_return_reception_clerk(self, clerk_mock):
+    @base.mock.patch('src.house.services.ReceptionService.create_clerk')
+    def test_should_return_reception_clerk(self, create_mock):
+        clerk_mock = self.mock.MagicMock()
+        create_mock.return_value = clerk_mock
         resource_base = resources.ResourceBase()
         self.assertEqual(resource_base.clerk, clerk_mock)
 
@@ -442,35 +444,11 @@ class UserResourcePostTest(base.TestCase):
     @base.TestCase.mock.patch('src.resource.resources.UserResource.clerk')
     @base.TestCase.mock.patch('src.resource.resources.UserResource.payload')
     @base.TestCase.mock.patch('src.resource.resources.g')
-    def test_should_call_user_to_as_dict(self, g_mock, payload_mock, clerk_mock):
-        g_mock.authenticated = True
-        payload_mock = {
-            "username": "antunesleo",
-            "password": 12345
-        }
-        user_mock = self.mock.MagicMock()
-        user_mock.as_dict.return_value = {
-            "username": "antunesleo"
-        }
-        clerk_mock.create_user_account.return_value = user_mock
-        account_resource = resources.UserResource()
-        account_resource.post()
-        self.assertTrue(user_mock.as_dict.called)
-
-    @base.TestCase.mock.patch('src.resource.resources.UserResource.clerk')
-    @base.TestCase.mock.patch('src.resource.resources.UserResource.payload')
-    @base.TestCase.mock.patch('src.resource.resources.g')
     def test_should_return_user(self, g_mock, payload_mock, clerk_mock):
         g_mock.authenticated = True
-        payload_mock = {
-            "username": "antunesleo",
-            "password": 12345
-        }
-        user_mock = self.mock.MagicMock()
-        user_mock.as_dict.return_value = {
+        clerk_mock.create_user_account.return_value = {
             "username": "antunesleo"
         }
-        clerk_mock.create_user_account.return_value = user_mock
         account_resource = resources.UserResource()
         response = account_resource.post()
         self.assertEqual(response, {"username": "antunesleo"})
@@ -871,8 +849,7 @@ class NoteResourceGetTest(base.TestCase):
     def test_should_return_note(self, logged_user_mock, g_mock):
         g_mock = self.mock.MagicMock()
         g_mock.authenticated.return_value = True
-        note_mock = self.mock.MagicMock()
-        note_mock.as_dict.return_value = {'id': 1}
+        note_mock = {'id': 1}
         logged_user_mock.get_a_note.return_value = note_mock
         note_resource = resources.NoteResource()
         response = note_resource.get(1)
@@ -1064,9 +1041,7 @@ class NoteResourcePutTest(base.TestCase):
             'content': 'And I need to write a mock content',
             'color': '#FFFFFF'
         }
-        note_mock = self.mock.MagicMock()
-        note_mock.as_dict.return_value = payload_mock
-        logged_user_mock.update_a_note.return_value = note_mock
+        logged_user_mock.update_a_note.return_value = payload_mock
         note_resource = resources.NoteResource()
         response = note_resource.put(1)
         self.assertEqual(response, payload_mock)

@@ -1,5 +1,6 @@
 import datetime
-from src.house import services
+from src.house.services import WallService, SharingService
+from src.central_files.services import ArchiveService
 from src.base import domain
 from src import models, config as config_module
 
@@ -12,42 +13,59 @@ class User(domain.Entity):
     def __init__(self, db_instance):
         super(User, self).__init__(db_instance)
         self.id = db_instance.id
-        self._notes = None
-        self._shared_notes = None
+        self.__notes = None
+        self.__shared_notes = None
+        self.__token = None
+        self.__password = None
+        self.__username = None
+        self.__email = None
+        self.__avatar_path = None
 
     @property
     def notes(self):
-        if self._notes is None:
-            self._notes = services.NoteService.list_for_user(user_id=self.id)
-        return self._notes
+        if self.__notes is None:
+            note_factory = WallService.pass_me_the_note_factory()
+            self.__notes = note_factory.list_for_user(user_id=self.id)
+        return self.__notes
 
     @property
     def shared_notes(self):
-        if self._shared_notes is None:
-            notes_sharing = services.NoteSharingService.list_it_for_user(self.id)
-            self._shared_notes = [services.NoteService.create_for_user(note_sharing.user_id, note_sharing.note_id)
+        if self.__shared_notes is None:
+            note_sharing_factory = SharingService.pass_me_the_note_sharing_factory()
+            notes_sharing = note_sharing_factory.list_for_user(self.id)
+            self.__shared_notes = [WallService.create_note_for_user(note_sharing.user_id, note_sharing.note_id)
                                   for note_sharing in notes_sharing]
-        return self._shared_notes
+        return self.__shared_notes
 
     @property
     def token(self):
-        return self.db_instance.token
+        if self.__token is None:
+            self.__token = self.db_instance.token
+        return self.__token
 
     @property
     def password(self):
-        return self.db_instance.password
+        if self.__password is None:
+            self.__password = self.db_instance.password
+        return self.__password
 
     @property
     def username(self):
-        return self.db_instance.username
+        if self.__username is None:
+            self.__username = self.db_instance.username
+        return self.__username
 
     @property
     def email(self):
-        return self.db_instance.email
+        if self.__email is None:
+            self.__email = self.db_instance.email
+        return self.__email
 
     @property
     def avatar_path(self):
-        return self.db_instance.avatar_path
+        if self.__avatar_path is None:
+            self.__avatar_path = self.db_instance.avatar_path
+        return self.__avatar_path
 
     @classmethod
     def create_with_token(cls, token):
@@ -61,27 +79,29 @@ class User(domain.Entity):
     def create_with_email(cls, email):
         return cls._create_with_keys(email=email)
 
-    # TODO: Isso está errado? Deveria o clerk ter esse repositório e salvar?
     @classmethod
     def create_new(cls, user):
         car = cls.repository.create_from_dict(user)
         return cls.create_with_instance(car)
 
-    def create_a_note(self, note):
-        note['user_id'] = self.id
-        return services.NoteService.create_new(note)
+    def create_a_note(self, note_dict):
+        note_dict['user_id'] = self.id
+        note_factory = WallService.pass_me_the_note_factory()
+        note = note_factory.create_new(note_dict)
+        return note.as_dict()
 
     def delete_a_note(self, id):
-        note = services.NoteService.create_for_user(id, self.id)
+        note = WallService.create_note_for_user(id, self.id)
         note.delete()
 
     def get_a_note(self, id):
-        return services.NoteService.create_for_user(id, self.id)
+        note = WallService.create_note_for_user(id, self.id)
+        return note.as_dict()
 
     def update_a_note(self, id, note_changes):
-        note = services.NoteService.create_for_user(id, self.id)
+        note = WallService.create_note_for_user(id, self.id)
         note.update(note_changes)
-        return note
+        return note.as_dict()
 
     def update(self, payload):
         payload.pop('password', None)
@@ -92,17 +112,27 @@ class User(domain.Entity):
         avatar_file = files['avatar']
         temp_file_path = '{}/{}-{}'.format(config.TEMP_PATH, self.id, 'avatar.png')
         avatar_file.save(temp_file_path)
-        image_path = services.FileService.save_avatar(temp_file_path, self.id)
+        scribe = ArchiveService.create_scribe_factory_for_user(self.id)
+        image_path = scribe.save(temp_file_path)
         self.db_instance.avatar_path = image_path
         self.db_instance.save_db()
 
     def share_a_note(self, note_id, user_id):
-        note = services.NoteService.create_for_user(note_id, self.id)
-        services.NoteSharingService.share_it_for_me(self.id, note.id, user_id)
+        note = WallService.create_note_for_user(note_id, self.id)
+        note_sharing_factory = SharingService.pass_me_the_note_sharing_factory()
+        note_sharing_factory.share(self.id, note.id, user_id)
         note.mark_as_shared()
 
-    def as_dict(self):
+    def as_dict(self, full=False):
+        if full:
+            return {
+                "username": self.username,
+                "email": self.email,
+                "token": self.token,
+                "password": self.password,
+                "avatar_path": self.avatar_path
+            }
         return {
-            "username": self.db_instance.username,
-            "email": self.db_instance.email
+            "username": self.username,
+            "email": self.email
         }

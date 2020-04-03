@@ -1,57 +1,42 @@
 # -*- coding: utf-8 -*-
-from src.base.services import Service
-from src.central_files import archive
-from src.house import residents, sharing
+from src.base.services import DIPService
 
 
-class NoteService(Service):
-    _entity = 'src.house.wall'
+class ReceptionService(DIPService):
+    _module = 'src.store.reception'
 
     @classmethod
-    def create_new(cls, note):
-        return cls.entity.Note.create_new(note)
+    def create_clerk(cls):
+        return cls.module.Clerk.create()
+
+
+class WallService(DIPService):
+    _module = 'src.house.wall'
 
     @classmethod
-    def list_for_user(cls, user_id):
-        return cls.entity.Note.list_for_user(user_id)
+    def create_note_for_user(cls, id, user_id):
+        return cls.module.Note.create_for_user(id, user_id)
 
     @classmethod
-    def create_for_user(cls, id, user_id):
-        return cls.entity.Note.create_for_user(id, user_id)
+    def pass_me_the_note_factory(cls):
+        return cls.module.Note
+
+
+class ResidentsService(DIPService):
+    _module = 'src.house.residents'
 
     @classmethod
-    def update_by_id(cls, id, changed_note, user_id):
-        note = cls.entity.Note.create_for_user(id, user_id)
-        note.update(changed_note)
-        return note
-
-
-class FileService(Service):
+    def pass_me_the_user_factory(cls):
+        return cls.module.User
 
     @classmethod
-    def save_avatar(cls, temp_file_path, user_id):
-        file = archive.ScribeFactory.create_with_environment(user_id, router='avatar')
-        return file.save(temp_file_path)
+    def create_user_with_id(cls, user_id):
+        return cls.module.User.create_with_id(user_id)
 
 
-class UserService(Service):
-
-    @classmethod
-    def create_new(cls, user):
-        return residents.User.create_new(user)
+class SharingService(DIPService):
+    _module = 'src.house.sharing'
 
     @classmethod
-    def create_with_id(cls, user_id):
-        return residents.User.create_with_id(user_id)
-
-
-class NoteSharingService(Service):
-
-    @classmethod
-    def share_it_for_me(cls, giver_id, note_id, target_user_id):
-        sharing.NoteSharing.share(giver_id, note_id, target_user_id)
-
-    @classmethod
-    def list_it_for_user(cls, user_id):
-        notes_sharing = sharing.NoteSharing.list_for_user(user_id)
-        return notes_sharing
+    def pass_me_the_note_sharing_factory(cls):
+        return cls.module.NoteSharing

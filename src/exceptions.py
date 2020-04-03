@@ -1,3 +1,7 @@
+class InvalidDomain(Exception):
+    pass
+
+
 class EmailAlreadyExists(Exception):
     pass
 

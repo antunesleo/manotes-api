@@ -21,7 +21,7 @@ database.AppRepository.db = SQLAlchemy(web_app)
 def before_request():
     from src.security import authentication
     token = request.cookies.get('userToken')
-    authentication.AuthService.authenticate_with_token(token)
+    authentication.AuthService.check_authorization(token)
 
 
 @web_app.after_request
