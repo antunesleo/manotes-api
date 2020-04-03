@@ -13,44 +13,59 @@ class User(domain.Entity):
     def __init__(self, db_instance):
         super(User, self).__init__(db_instance)
         self.id = db_instance.id
-        self._notes = None
-        self._shared_notes = None
+        self.__notes = None
+        self.__shared_notes = None
+        self.__token = None
+        self.__password = None
+        self.__username = None
+        self.__email = None
+        self.__avatar_path = None
 
     @property
     def notes(self):
-        if self._notes is None:
+        if self.__notes is None:
             note_factory = WallService.pass_me_the_note_factory()
-            self._notes = note_factory.list_for_user(user_id=self.id)
-        return self._notes
+            self.__notes = note_factory.list_for_user(user_id=self.id)
+        return self.__notes
 
     @property
     def shared_notes(self):
-        if self._shared_notes is None:
+        if self.__shared_notes is None:
             note_sharing_factory = SharingService.pass_me_the_note_sharing_factory()
             notes_sharing = note_sharing_factory.list_for_user(self.id)
-            self._shared_notes = [WallService.create_note_for_user(note_sharing.user_id, note_sharing.note_id)
+            self.__shared_notes = [WallService.create_note_for_user(note_sharing.user_id, note_sharing.note_id)
                                   for note_sharing in notes_sharing]
-        return self._shared_notes
+        return self.__shared_notes
 
     @property
     def token(self):
-        return self.db_instance.token
+        if self.__token is None:
+            self.__token = self.db_instance.token
+        return self.__token
 
     @property
     def password(self):
-        return self.db_instance.password
+        if self.__password is None:
+            self.__password = self.db_instance.password
+        return self.__password
 
     @property
     def username(self):
-        return self.db_instance.username
+        if self.__username is None:
+            self.__username = self.db_instance.username
+        return self.__username
 
     @property
     def email(self):
-        return self.db_instance.email
+        if self.__email is None:
+            self.__email = self.db_instance.email
+        return self.__email
 
     @property
     def avatar_path(self):
-        return self.db_instance.avatar_path
+        if self.__avatar_path is None:
+            self.__avatar_path = self.db_instance.avatar_path
+        return self.__avatar_path
 
     @classmethod
     def create_with_token(cls, token):
@@ -108,8 +123,16 @@ class User(domain.Entity):
         note_sharing_factory.share(self.id, note.id, user_id)
         note.mark_as_shared()
 
-    def as_dict(self):
+    def as_dict(self, full=False):
+        if full:
+            return {
+                "username": self.username,
+                "email": self.email,
+                "token": self.token,
+                "password": self.password,
+                "avatar_path": self.avatar_path
+            }
         return {
-            "username": self.db_instance.username,
-            "email": self.db_instance.email
+            "username": self.username,
+            "email": self.email
         }

@@ -34,15 +34,17 @@ class UserNotesTest(base.TestCase):
         self.assertTrue(note_factory_mock.list_for_user.called)
         self.assertEqual(notes, [])
 
-    @base.TestCase.mock.patch('src.house.residents.WallService')
-    def test_should_return_notes_if_cached(self, wall_service):
-        wall_service.list_for_user.return_value = []
+    @base.TestCase.mock.patch('src.house.residents.WallService.pass_me_the_note_factory')
+    def test_should_return_notes_if_cached(self, pass_me_the_note_factory_mock):
+        note_factory = self.mock.MagicMock()
+        note_factory.list_for_user.return_value = []
+        pass_me_the_note_factory_mock.return_value = note_factory
         db_instance = self.mock.MagicMock()
         db_instance.id = 1
         user = residents.User(db_instance=db_instance)
-        user._notes = []
+        user.notes
         notes = user.notes
-        self.assertFalse(wall_service.list_for_user.called)
+        note_factory.list_for_user.assert_called_once()
         self.assertEqual(notes, [])
 
 
@@ -61,39 +63,49 @@ class UserSharedNotesTest(base.TestCase):
         note_sharing_factory_mock.list_for_user.assert_called_with(1)
 
     @base.TestCase.mock.patch('src.house.residents.WallService')
-    @base.TestCase.mock.patch('src.house.residents.SharingService')
-    def test_should_call_wall_service_to_create_for_user_if_not_cached(self, sharing_service_mock, wall_service_mock):
+    @base.TestCase.mock.patch('src.house.residents.SharingService.pass_me_the_note_sharing_factory')
+    def test_should_call_wall_service_to_create_for_user_if_not_cached(self, pass_me_the_note_sharing_factory_mock, wall_service_mock):
         note_sharing_1 = self.mock.MagicMock(user_id=1, note_id=10)
         note_sharing_2 = self.mock.MagicMock(user_id=1, note_id=20)
         note_sharing_factory_mock = self.mock.MagicMock()
         note_sharing_factory_mock.list_for_user.return_value = [note_sharing_1, note_sharing_2]
-        sharing_service_mock.pass_me_the_note_sharing_factory.return_value = note_sharing_factory_mock
+        pass_me_the_note_sharing_factory_mock.return_value = note_sharing_factory_mock
         db_instance = self.mock.MagicMock()
         db_instance.id = 1
         user = residents.User(db_instance=db_instance)
         user.shared_notes
         wall_service_mock.create_note_for_user.assert_called_with(1, 20) # TODO: How to test this better?
 
-    @base.TestCase.mock.patch('src.house.residents.SharingService')
-    def test_should_return_shared_notes_if_cached(self, sharing_service_mock):
-        sharing_service_mock.list_note_sharing_for_user.return_value = []
+    @base.TestCase.mock.patch('src.house.residents.WallService')
+    @base.TestCase.mock.patch('src.house.residents.SharingService.pass_me_the_note_sharing_factory')
+    def test_should_return_shared_notes_if_cached(self, pass_me_the_note_sharing_factory_mock, wall_service_mock):
+        note_sharing_factory_mock = self.mock.MagicMock()
+        note_sharing_factory_mock.list_for_user.return_value = []
+        pass_me_the_note_sharing_factory_mock.return_value = note_sharing_factory_mock
         db_instance = self.mock.MagicMock()
         db_instance.id = 1
         user = residents.User(db_instance=db_instance)
-        user._shared_notes = []
+        user.shared_notes
         shared_notes = user.shared_notes
         self.assertEqual(shared_notes, [])
+        note_sharing_factory_mock.list_for_user.assert_called_once()
 
 
 class UserTokenTest(base.TestCase):
 
     def setUp(self):
-        db_instance_mock = self.mock.MagicMock()
-        db_instance_mock.token = 'ahfhiewuhajhaiu'
-        db_instance_mock.id = 1
-        self.user = residents.User(db_instance_mock)
+        self.db_instance_mock = self.mock.MagicMock()
+        self.db_instance_mock.token = 'ahfhiewuhajhaiu'
+        self.db_instance_mock.id = 1
+        self.user = residents.User(self.db_instance_mock)
 
-    def test_should_return_db_instance_token(self):
+    def test_should_return_token_when_not_cached(self):
+        token = self.user.token
+        self.assertEqual(token, 'ahfhiewuhajhaiu')
+
+    def test_should_return_token_when_cached(self):
+        self.user.token
+        self.db_instance_mock.token = 'aaaaaa'
         token = self.user.token
         self.assertEqual(token, 'ahfhiewuhajhaiu')
 
@@ -101,12 +113,18 @@ class UserTokenTest(base.TestCase):
 class UserPasswordTest(base.TestCase):
 
     def setUp(self):
-        db_instance_mock = self.mock.MagicMock()
-        db_instance_mock.password = 'ahfhiewuhajhaiu'
-        db_instance_mock.id = 1
-        self.user = residents.User(db_instance_mock)
+        self.db_instance_mock = self.mock.MagicMock()
+        self.db_instance_mock.password = 'ahfhiewuhajhaiu'
+        self.db_instance_mock.id = 1
+        self.user = residents.User(self.db_instance_mock)
 
-    def test_should_return_db_instance_password(self):
+    def test_should_return_password_when_not_cached(self):
+        password = self.user.password
+        self.assertEqual(password, 'ahfhiewuhajhaiu')
+
+    def test_should_return_password_when_cached(self):
+        self.user.password
+        self.db_instance_mock.password = 'aaaa'
         password = self.user.password
         self.assertEqual(password, 'ahfhiewuhajhaiu')
 
@@ -114,12 +132,18 @@ class UserPasswordTest(base.TestCase):
 class UserUsernameTest(base.TestCase):
 
     def setUp(self):
-        db_instance_mock = self.mock.MagicMock()
-        db_instance_mock.username = 'ahfhiewuhajhaiu'
-        db_instance_mock.id = 1
-        self.user = residents.User(db_instance_mock)
+        self.db_instance_mock = self.mock.MagicMock()
+        self.db_instance_mock.username = 'ahfhiewuhajhaiu'
+        self.db_instance_mock.id = 1
+        self.user = residents.User(self.db_instance_mock)
 
-    def test_should_return_db_instance_username(self):
+    def test_should_return_username_when_not_cached(self):
+        username = self.user.username
+        self.assertEqual(username, 'ahfhiewuhajhaiu')
+
+    def test_should_return_username_when_cached(self):
+        self.user.username
+        self.db_instance_mock.username = 'fdfa'
         username = self.user.username
         self.assertEqual(username, 'ahfhiewuhajhaiu')
 
@@ -127,12 +151,18 @@ class UserUsernameTest(base.TestCase):
 class UserEmailTest(base.TestCase):
 
     def setUp(self):
-        db_instance_mock = self.mock.MagicMock()
-        db_instance_mock.email = 'breno@breno.com'
-        db_instance_mock.id = 1
-        self.user = residents.User(db_instance_mock)
+        self.db_instance_mock = self.mock.MagicMock()
+        self.db_instance_mock.email = 'breno@breno.com'
+        self.db_instance_mock.id = 1
+        self.user = residents.User(self.db_instance_mock)
 
-    def test_should_return_db_instance_email(self):
+    def test_should_return_email_not_cached(self):
+        email = self.user.email
+        self.assertEqual(email, 'breno@breno.com')
+
+    def test_should_return_email_cached(self):
+        self.user.email
+        self.db_instance_mock.email = 'aaaa'
         email = self.user.email
         self.assertEqual(email, 'breno@breno.com')
 
@@ -140,12 +170,18 @@ class UserEmailTest(base.TestCase):
 class UserAvatarPathTest(base.TestCase):
 
     def setUp(self):
-        db_instance_mock = self.mock.MagicMock()
-        db_instance_mock.avatar_path = 'some/path'
-        db_instance_mock.id = 1
-        self.user = residents.User(db_instance_mock)
+        self.db_instance_mock = self.mock.MagicMock()
+        self.db_instance_mock.avatar_path = 'some/path'
+        self.db_instance_mock.id = 1
+        self.user = residents.User(self.db_instance_mock)
 
-    def test_should_return_db_instance_avatar_path(self):
+    def test_should_return_db_instance_avatar_ath_when_not_cached(self):
+        avatar_path = self.user.avatar_path
+        self.assertEqual(avatar_path, 'some/path')
+
+    def test_should_return_db_instance_avatar_path_when_cached(self):
+        self.user.avatar_path
+        self.db_instance_mock.email = 'aaaa'
         avatar_path = self.user.avatar_path
         self.assertEqual(avatar_path, 'some/path')
 
@@ -223,19 +259,46 @@ class UserAsDictTest(base.TestCase):
         db_instance_mock.id = 1
         db_instance_mock.username = 'breno'
         db_instance_mock.email = 'breno@breno'
+        db_instance_mock.token = 'ToKeN'
+        db_instance_mock.password = '12345'
+        db_instance_mock.avatar_path = 'some/path'
         self.user = residents.User(db_instance_mock)
 
-    def test_should_return_dict(self):
+    def test_should_return_dict_when_not_full(self):
         user = self.user.as_dict()
         self.assertIsInstance(user, dict)
 
-    def test_should_return_db_instance_username(self):
+    def test_should_return_username_when_not_full(self):
         user = self.user.as_dict()
         self.assertTrue(user.get('username'), 'breno')
 
-    def test_should_return_db_instance_email(self):
+    def test_should_return_email_when_not_full(self):
         user = self.user.as_dict()
         self.assertTrue(user.get('username'), 'breno@breno')
+
+    def test_should_return_dict_when_full(self):
+        user = self.user.as_dict(full=True)
+        self.assertIsInstance(user, dict)
+
+    def test_should_return_db_instance_username_when_full(self):
+        user = self.user.as_dict(full=True)
+        self.assertTrue(user.get('username'), 'breno')
+
+    def test_should_return_db_instance_email_when_full(self):
+        user = self.user.as_dict(full=True)
+        self.assertTrue(user.get('username'), 'breno@breno')
+
+    def test_should_return_db_instance_token_when_full(self):
+        user = self.user.as_dict(full=True)
+        self.assertTrue(user.get('token'), 'ToKeN')
+
+    def test_should_return_db_instance_password_when_full(self):
+        user = self.user.as_dict(full=True)
+        self.assertTrue(user.get('password'), '12345')
+
+    def test_should_return_db_instance_avatar_path_when_full(self):
+        user = self.user.as_dict(full=True)
+        self.assertTrue(user.get('avatar_path'), 'some/path')
 
 
 class UserGetANoteTest(base.TestCase):
