@@ -10,16 +10,17 @@ config = config_module.get_config()
 class User(domain.Entity):
     repository = models.User
 
-    def __init__(self, db_instance):
+    def __init__(self, db_instance=None):
         super(User, self).__init__(db_instance)
-        self.id = db_instance.id
-        self.__notes = None
-        self.__shared_notes = None
-        self.__token = None
-        self.__password = None
-        self.__username = None
-        self.__email = None
-        self.__avatar_path = None
+        if db_instance:
+            self.id = db_instance.id
+            self.__notes = None
+            self.__shared_notes = None
+            self.__token = None
+            self.__password = None
+            self.__username = None
+            self.__email = None
+            self.__avatar_path = None
 
     @property
     def notes(self):
