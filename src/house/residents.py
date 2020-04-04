@@ -10,17 +10,25 @@ config = config_module.get_config()
 class User(domain.Entity):
     repository = models.User
 
-    def __init__(self, db_instance=None):
+    def __init__(self, db_instance=None, user_dict=None):
         super(User, self).__init__(db_instance)
+        self.__notes = None
+        self.__shared_notes = None
+
         if db_instance:
             self.id = db_instance.id
-            self.__notes = None
-            self.__shared_notes = None
             self.__token = None
             self.__password = None
             self.__username = None
             self.__email = None
             self.__avatar_path = None
+        if user_dict:
+            self.id = user_dict['id']
+            self.__token = user_dict['token']
+            self.__password = user_dict['password']
+            self.__username = user_dict['username']
+            self.__email = user_dict['email']
+            self.__avatar_path = user_dict['avatar_path']
 
     @property
     def notes(self):
@@ -79,6 +87,10 @@ class User(domain.Entity):
     @classmethod
     def create_with_email(cls, email):
         return cls._create_with_keys(email=email)
+
+    @classmethod
+    def create_with_dict(cls, user_dict):
+        return cls(user_dict=user_dict)
 
     @classmethod
     def create_new(cls, user):

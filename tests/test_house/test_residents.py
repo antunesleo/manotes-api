@@ -20,6 +20,43 @@ class UserCreateWithToken(base.TestCase):
         create_with_keys_mock.assert_called_with(token='asfqERafd')
 
 
+class UserCreateWithDictTest(base.TestCase):
+
+    def setUp(self):
+        self.user_dict = {
+            'id': 1,
+            'username': 'breno',
+            'email': 'breno@email.com',
+            'token': 'ToKeN',
+            'password': 'aPkQerT',
+            'avatar_path': 'some/path'
+        }
+
+    def test_should_create(self):
+        user = residents.User.create_with_dict(self.user_dict)
+        self.assertIsInstance(user, residents.User)
+
+    def test_should_has_id(self):
+        user = residents.User.create_with_dict(self.user_dict)
+        self.assertEqual(user.id, 1)
+
+    def test_should_has_username(self):
+        user = residents.User.create_with_dict(self.user_dict)
+        self.assertEqual(user.username, 'breno')
+
+    def test_should_has_email(self):
+        user = residents.User.create_with_dict(self.user_dict)
+        self.assertEqual(user.email, 'breno@email.com')
+
+    def test_should_has_password(self):
+        user = residents.User.create_with_dict(self.user_dict)
+        self.assertEqual(user.password, 'aPkQerT')
+
+    def test_should_has_avatar_path(self):
+        user = residents.User.create_with_dict(self.user_dict)
+        self.assertEqual(user.avatar_path, 'some/path')
+
+
 class UserNotesTest(base.TestCase):
 
     @base.TestCase.mock.patch('src.house.residents.WallService')
