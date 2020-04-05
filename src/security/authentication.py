@@ -24,12 +24,19 @@ class AuthService(DomainService):
         return security_services.HashService.is_string_equals_to_hash(credentials['password'], user.password), user
 
     @classmethod
-    def check_authorization(cls, token):
+    def check_authorization(cls, user_email, encoded_token):
         from src.house import residents
         try:
-            user = residents.User.create_with_token(token)
+            user = residents.User.create_with_email(user_email)
+        except exceptions.NotFound:
+            g.authenticated = False
+            return
+
+        try:
+            user_dict = security_services.EncodingService.decode(encoded_token, user.token)
+            user = residents.User.create_with_dict(user_dict)
             g.user = user
             g.current_token = user.token
             g.authenticated = True
-        except exceptions.NotFound:
+        except exceptions.DecodingError:
             g.authenticated = False

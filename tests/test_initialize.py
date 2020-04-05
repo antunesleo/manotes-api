@@ -27,14 +27,6 @@ class AddTokenHeaderTest(base.TestCase):
         base.initialize.add_token_header(response_mock)
         g_mock.get.assert_called_with("user")
 
-    @base.mock.patch('src.initialize.g')
-    def test_g_has_current_token_if_user_is_not_none(self, g_mock):
-        response_mock = self.mock.MagicMock()
-        g_mock.current_token = 'QQEREQRETYRUTADSGG'
-        g_mock.get.return_value = self.mock.MagicMock()
-        base.initialize.add_token_header(response_mock)
-        self.assertTrue(g_mock.current_token, 'QQEREQRETYRUTADSGG')
-
     @base.mock.patch('src.initialize.datetime.datetime')
     @base.mock.patch('src.initialize.g')
     def test_should_call_datetime_to_get_time_now(self, g_mock, datetime_mock):
@@ -57,7 +49,27 @@ class AddTokenHeaderTest(base.TestCase):
         datetime_mock.datetime.now.return_value = 'A'
         datetime_mock.timedelta.return_value = 'B'
         response = base.initialize.add_token_header(response_mock)
-        response.set_cookie.assert_called_with('userToken', 'QQEREQRETYRUTADSGG', expires='AB')
+        response.set_cookie.assert_any_call('userToken', 'QQEREQRETYRUTADSGG', expires='AB')
+
+    @base.mock.patch('src.initialize.datetime')
+    @base.mock.patch('src.initialize.g')
+    def test_should_call_response_to_set_user_encoded_token_and_expires_date(self, g_mock, datetime_mock):
+        g_mock.user.encoded_token = 'QQEREQRETYRUTADSGG'
+        response_mock = self.mock.MagicMock()
+        datetime_mock.datetime.now.return_value = 'A'
+        datetime_mock.timedelta.return_value = 'B'
+        response = base.initialize.add_token_header(response_mock)
+        response.set_cookie.assert_any_call('userEncodedToken', 'QQEREQRETYRUTADSGG', expires='AB')
+
+    @base.mock.patch('src.initialize.datetime')
+    @base.mock.patch('src.initialize.g')
+    def test_should_call_response_to_set_user_email_and_expires_date(self, g_mock, datetime_mock):
+        g_mock.user.email = 'breno@email.com'
+        response_mock = self.mock.MagicMock()
+        datetime_mock.datetime.now.return_value = 'A'
+        datetime_mock.timedelta.return_value = 'B'
+        response = base.initialize.add_token_header(response_mock)
+        response.set_cookie.assert_any_call('userEmail', 'breno@email.com', expires='AB')
 
 
 class CreateApiTest(base.TestCase):
