@@ -90,12 +90,16 @@ class User(domain.Entity):
 
     @classmethod
     def create_with_dict(cls, user_dict):
-        return cls(user_dict=user_dict)
+            return cls(user_dict=user_dict)
 
     @classmethod
     def create_new(cls, user):
         car = cls.repository.create_from_dict(user)
         return cls.create_with_instance(car)
+
+    def __load_db_instance(self):
+        if self.db_instance is None:
+            self.db_instance = self.repository.one_or_none(id=self.id)
 
     def create_a_note(self, note_dict):
         note_dict['user_id'] = self.id
@@ -117,11 +121,13 @@ class User(domain.Entity):
         return note.as_dict()
 
     def update(self, payload):
+        self.__load_db_instance()
         payload.pop('password', None)
         payload['update_date'] = datetime.datetime.utcnow()
         self.db_instance.update_from_dict(payload)
 
     def change_avatar(self, files):
+        self.__load_db_instance()
         avatar_file = files['avatar']
         temp_file_path = '{}/{}-{}'.format(config.TEMP_PATH, self.id, 'avatar.png')
         avatar_file.save(temp_file_path)
@@ -138,7 +144,9 @@ class User(domain.Entity):
 
     def as_dict(self, full=False):
         if full:
+            # TODO: Precisa fazer teste
             return {
+                "id": self.id,
                 "username": self.username,
                 "email": self.email,
                 "token": self.token,

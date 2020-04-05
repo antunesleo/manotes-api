@@ -86,11 +86,60 @@ class AuthServiceAuthenticateWithCredentialsTest(base.TestCase):
 
 class AuthServiceCheckAuthorizationTest(base.TestCase):
 
-   def test_should_authorizate(self):
-       pass
+    @base.mock.patch('src.security.authentication.g')
+    @base.mock.patch('src.security.security_services.EncodingService.decode')
+    @base.mock.patch('src.house.services.ResidentsService.pass_me_the_user_factory')
+    def test_should_authorize(self, pass_me_the_user_factory_mock, decode_mock, g_mock):
+        user_mock1 = self.mock.MagicMock()
+        user_mock1.token = 'SoMeToKeN'
+        user_mock2 = self.mock.MagicMock()
+        user_mock2.token = 'SoMeToKeN'
+        user_factory_mock = self.mock.MagicMock()
+        user_factory_mock.create_with_email.return_value = user_mock1
+        user_factory_mock.create_with_dict.return_value = user_mock2
+        pass_me_the_user_factory_mock.return_value = user_factory_mock
+        decode_mock.return_value = {
+            'id': 1,
+            'username': 'breno',
+            'email': 'breno@email.com',
+            'avatar_path': 'some/path',
+            'token': 'SoMeToKen',
+        }
+        authentication.AuthService.check_authorization('breno@email.com', 'AKPOKJopajiojojOHaj')
+        self.assertEqual(g_mock.user, user_mock2)
+        self.assertEqual(g_mock.current_token, 'SoMeToKeN')
+        self.assertEqual(g_mock.encoded_token, 'AKPOKJopajiojojOHaj')
+        self.assertTrue(g_mock.authenticated)
 
-   def test_should_not_authorizate_if_user_not_found(self):
-       pass
+    @base.mock.patch('src.security.authentication.g')
+    @base.mock.patch('src.security.security_services.EncodingService.decode')
+    @base.mock.patch('src.house.services.ResidentsService.pass_me_the_user_factory')
+    def test_should_not_authorize_if_user_not_found(self, pass_me_the_user_factory_mock, decode_mock, g_mock):
+        user_factory_mock = self.mock.MagicMock()
+        user_factory_mock.create_with_email.side_effect = exceptions.NotFound
+        pass_me_the_user_factory_mock.return_value = user_factory_mock
+        decode_mock.return_value = {
+            'id': 1,
+            'username': 'breno',
+            'email': 'breno@email.com',
+            'avatar_path': 'some/path',
+            'token': 'SoMeToKen',
+        }
+        authentication.AuthService.check_authorization('breno@email.com', 'AKPOKJopajiojojOHaj')
+        self.assertFalse(g_mock.authenticated)
 
-   def test_should_not_authorizate_if_decoding_error(self):
-       pass
+    @base.mock.patch('src.security.authentication.g')
+    @base.mock.patch('src.security.security_services.EncodingService.decode')
+    @base.mock.patch('src.house.services.ResidentsService.pass_me_the_user_factory')
+    def test_should_not_authorize_if_decoding_error(self, pass_me_the_user_factory_mock, decode_mock, g_mock):
+        user_mock1 = self.mock.MagicMock()
+        user_mock1.token = 'SoMeToKeN'
+        user_mock2 = self.mock.MagicMock()
+        user_mock2.token = 'SoMeToKeN'
+        user_factory_mock = self.mock.MagicMock()
+        user_factory_mock.create_with_email.return_value = user_mock1
+        user_factory_mock.create_with_dict.return_value = user_mock2
+        pass_me_the_user_factory_mock.return_value = user_factory_mock
+        decode_mock.side_effect = exceptions.DecodingError
+        authentication.AuthService.check_authorization('breno@email.com', 'AKPOKJopajiojojOHaj')
+        self.assertFalse(g_mock.authenticated)

@@ -25,18 +25,19 @@ class AuthService(DomainService):
 
     @classmethod
     def check_authorization(cls, user_email, encoded_token):
-        from src.house import residents
         try:
-            user = residents.User.create_with_email(user_email)
+            user_class = ResidentsService.pass_me_the_user_factory()
+            user = user_class.create_with_email(user_email)
         except exceptions.NotFound:
             g.authenticated = False
             return
 
         try:
             user_dict = security_services.EncodingService.decode(encoded_token, user.token)
-            user = residents.User.create_with_dict(user_dict)
+            user = user_class.create_with_dict(user_dict)
             g.user = user
             g.current_token = user.token
+            g.encoded_token = encoded_token
             g.authenticated = True
         except exceptions.DecodingError:
             g.authenticated = False

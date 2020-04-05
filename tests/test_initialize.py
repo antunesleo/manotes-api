@@ -54,7 +54,7 @@ class AddTokenHeaderTest(base.TestCase):
     @base.mock.patch('src.initialize.datetime')
     @base.mock.patch('src.initialize.g')
     def test_should_call_response_to_set_user_encoded_token_and_expires_date(self, g_mock, datetime_mock):
-        g_mock.user.encoded_token = 'QQEREQRETYRUTADSGG'
+        g_mock.encoded_token = 'QQEREQRETYRUTADSGG'
         response_mock = self.mock.MagicMock()
         datetime_mock.datetime.now.return_value = 'A'
         datetime_mock.timedelta.return_value = 'B'

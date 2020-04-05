@@ -157,12 +157,14 @@ class LoginResource(ResourceBase):
     def get(self):
         pass
 
+    ## TODO: Precisa refatorar os testes
     def post(self):
         try:
             authenticated, user = self.auth_service.authenticate_with_credentials(self.payload)
             if authenticated:
                     g.user = user
                     g.current_token = user.token
+                    g.encoded_token = user.encoded_token
                     return {'result': 'OK'}, 200
             return {
                 'result': 'login-not-authorized',
