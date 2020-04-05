@@ -17,6 +17,8 @@ class AuthService(DomainService):
                 user = user_factory.create_with_email(username_or_email)
             else:
                 user = user_factory.create_with_username(username_or_email)
+            encoded_token = security_services.EncodingService.encode(user.as_dict(full=True), user.token)
+            user.encoded_token = encoded_token
         except exceptions.NotFound:
             raise exceptions.UserNotExists('Could not find a user with username {}'.format(username_or_email))
         return security_services.HashService.is_string_equals_to_hash(credentials['password'], user.password), user
