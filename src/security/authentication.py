@@ -17,17 +17,27 @@ class AuthService(DomainService):
                 user = user_factory.create_with_email(username_or_email)
             else:
                 user = user_factory.create_with_username(username_or_email)
+            encoded_token = security_services.EncodingService.encode(user.as_dict(full=True), user.token)
+            user.encoded_token = encoded_token
         except exceptions.NotFound:
             raise exceptions.UserNotExists('Could not find a user with username {}'.format(username_or_email))
         return security_services.HashService.is_string_equals_to_hash(credentials['password'], user.password), user
 
     @classmethod
-    def check_authorization(cls, token):
-        from src.house import residents
+    def check_authorization(cls, user_email, encoded_token):
         try:
-            user = residents.User.create_with_token(token)
+            user_class = ResidentsService.pass_me_the_user_factory()
+            user = user_class.create_with_email(user_email)
+        except exceptions.NotFound:
+            g.authenticated = False
+            return
+
+        try:
+            user_dict = security_services.EncodingService.decode(encoded_token, user.token)
+            user = user_class.create_with_dict(user_dict)
             g.user = user
             g.current_token = user.token
+            g.encoded_token = encoded_token
             g.authenticated = True
-        except exceptions.NotFound:
+        except exceptions.DecodingError:
             g.authenticated = False

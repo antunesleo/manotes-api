@@ -6,6 +6,7 @@ import jwt
 from src.base.services import InfraService
 from passlib.hash import pbkdf2_sha256
 from validate_email import validate_email
+from src import exceptions
 
 
 class HashService(InfraService):
@@ -41,4 +42,11 @@ class EncodingService(InfraService):
 
     @classmethod
     def decode(cls, dict_to_decode, secret):
-        return jwt.decode(dict_to_decode, secret, algorithm='HS256')
+        try:
+            return jwt.decode(dict_to_decode, secret, algorithm='HS256')
+        except jwt.InvalidSignatureError:
+            raise exceptions.DecodingError('Could not decode because the key is invalid')
+        except jwt.DecodeError:
+            raise exceptions.DecodingError('Could not decode because the token is invalid')
+        except Exception:
+            raise exceptions.DecodingError('Could not decode.')

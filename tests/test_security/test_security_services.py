@@ -85,3 +85,4 @@ class EncodingServiceEncodeTest(base.TestCase):
         decoded = security_services.EncodingService.decode(some_dict, 'secret')
         self.assertEqual(decoded, decoded_mock)
         jwt_mock.decode.assert_called_with(some_dict, 'secret', algorithm='HS256')
+

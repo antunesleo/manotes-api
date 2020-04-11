@@ -56,3 +56,7 @@ class NoteNotFound(Exception):
 
 class NoteNotMine(Exception):
     pass
+
+
+class DecodingError(Exception):
+    pass

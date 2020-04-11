@@ -17,11 +17,15 @@ establish.register_tasks(worker)
 database.AppRepository.db = SQLAlchemy(web_app)
 
 
+# TODO: Precisa refatorar os testes
 @web_app.before_request
 def before_request():
     from src.security import authentication
     token = request.cookies.get('userToken')
-    authentication.AuthService.check_authorization(token)
+    encoded_token = request.cookies.get('userEncodedToken')
+    user_email = request.cookies.get('userEmail')
+
+    authentication.AuthService.check_authorization(user_email, encoded_token)
 
 
 @web_app.after_request
@@ -32,7 +36,8 @@ def add_token_header(response):
         expire_date = datetime.datetime.now()
         expire_date = expire_date + datetime.timedelta(days=90)
         response.set_cookie('userToken', token, expires=expire_date)
-
+        response.set_cookie('userEncodedToken', g.encoded_token, expires=expire_date)
+        response.set_cookie('userEmail', g.user.email, expires=expire_date)
     return response
 
 
