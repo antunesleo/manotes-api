@@ -9,7 +9,9 @@ A Python restful-api sample.
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 If you prefer, you can also use Docker to get your copy running.
 
-### Prerequisites - Local Installation
+## Local Installation
+
+### Prerequisites
 
 * Linux
 * Python 3+
@@ -17,12 +19,7 @@ If you prefer, you can also use Docker to get your copy running.
 * Virtualenvwrapper (optional but recommended)
 * PostgreSQL 10+ 
 
-### Prerequisites - Docker
-
-* Docker CE
-* docker-compose
-
-### Installing - Local Installation
+### Installing
 
 Installing requirements
 ```
@@ -71,25 +68,27 @@ repo_token: <repo_token>
 service_name: manotes
 ```
 
-## Running the tests - Local Installation
+#### Running the tests
 ```
 load-env-test
 python -m testtools.run
 ```
 
-## Updating testing-coverage - Local Installation
+#### Updating testing-coverage
 ```
 coverage run --omit=<path_to_envs>/* -m testtools.run
 coveralls
 ```
 
-## Running API - Local Installation
+#### Running API - Local Installation
 ```
 load-env
 python run.py
 ```
 
-## Installing - Docker
+## Docker
+
+### Installing
 
 Preparing the Environment Variables
 
@@ -111,7 +110,7 @@ The last command will run the migrations
 
 *This will also take your project running!*
 
-## Running the tests - Docker
+### Running tests
 
 ```bash
 $ docker-compose up -d
@@ -124,7 +123,7 @@ This will take you inside the Web Container Bash.
 $ python -m testtools.run
 ```
 
-## Updating The Coverage - Docker
+### Updating tests coverage
 ```bash
 $ docker-compose up -d
 $ docker-compose exec web bash
@@ -137,7 +136,7 @@ coverage run --omit=<path_to_envs>/* -m testtools.run
 coveralls
 ```
 
-## Running API - Docker
+### Running API
 ```bash
 $ docker-compose up -d
 ```
@@ -145,14 +144,14 @@ $ docker-compose up -d
 ## Features
 | Features        | Description   |
 | -------------   |:-------------:| 
-| Login | [POST] in the endpoint 'api/login' unauthenticated users can login |
-| Create Account  | [POST] in the endpoint 'api/account' users can create account passing email, username and password| 
-| Update Account  | [PUT] in the endpoint 'api/account' authenticated users can update account infos passing email and/or username| 
-| Update Avatar   | [PUT] in the endpoint 'api/avatar' authenticated users can update avatar passing a file binary keyed avatar
-| Create Note     | [POST] in the endpoint 'api/notes' authenticated user can create a note passing name, content and color |
-| Update Note     | [PUT] in the endpoint 'api/notes' authenticated user can update a note passing name, content and color |
-| Get Note        | [GET] in the endpoint 'api/notes/<note_id>' authenticated user can list all notes or get a specific note if note_id is passed |
-| Delete Note     | [DELETE] in the endpoint 'api/notes/<note_id>' authenticated user can delete a note |
+| Login | [POST] in 'api/login' endpoint, unauthenticated users can login |
+| Create Account  | [POST] in endpoint 'api/users' users can create account passing email, username and password| 
+| Update Account  | [PUT] in endpoint 'api/users' authenticated users can update account infos like email and/or username| 
+| Update Avatar   | [PUT] in endpoint 'api/users/me/avatar' authenticated users can update avatar passing an image file|
+| Create Note     | [POST] in endpoint 'api/users/me/notes' authenticated user can create a note with name, content and color |
+| Update Note     | [PUT] in endpoint 'api/users/me/notes' authenticated user can update name, content and color from a note|
+| Get Note        | [GET] in endpoint 'api/users/me/notes/<note_id>' authenticated user can list all notes or get a specific note if note_id is passed |
+| Delete Note     | [DELETE] in endpoint 'api/users/me/notes/<note_id>' authenticated user can delete a note |
 
 
 ## Built With
@@ -181,11 +180,8 @@ $ docker-compose up -d
 * **Pedro Pozzi Ferreira** - *Dockerization and Packages Update* - [PozziSan](https://github.com/PozziSan)
 
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+See also the list of [contributors](https://github.com/antunesleo/manotes-api/contributors) who participated in this project.
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-pass
