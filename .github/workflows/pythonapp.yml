@@ -32,6 +32,26 @@ jobs:
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
+      env:
+        APP_SETTINGS: src.config.TestingConfig
+        DATABASE_URL: postgresql+psycopg2://manotes:manotes@localhost/manotes
+        REDIS_URL: redis://localhost:6379/0
+        SMTP_HOST: email-smtp.us-east-1.amazonaws.com
+        SMTP_PORT: 587
+        SMTP_USERNAME: AKIAI6UTKEDROAOGB3UA
+        SMTP_PASSWORD: AvFkgwarG6kzc2m98wiyZoPc6BavMyooazgUlbvQmdeP
+        FILE_STORAGE_PATH: /home/antunesleo/projects/manotes-api-data
+        AVATAR_BUCKET_NAME: manotes-api-avatar
+        S3_AWS_ACCESS_KEY_ID: AKIAIRWREJRPJP4TKLFA
+        S3_AWS_SECRET_ACCESS_KEY: ddsawFDAGAGD
+        TEMP_PATH: /home/antunesleo/projects/temp_path
+        PORT: 5436
+        FLASK_ENV: development
+        FLASK_DEBUG: 1
+        FLASK_APP: src.initialize:web_app
+        FLASK_RUN_HOST: 0.0.0.0
+        FLASK_RUN_PORT: 5324
+        APP_BASE_URL: 0.0.0.0
       run: |
         pip install pytest
         pytest
