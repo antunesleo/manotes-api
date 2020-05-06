@@ -1,4 +1,4 @@
-from tests import base
+from tests.unit import base
 from src import exceptions
 from src.security import authentication
 

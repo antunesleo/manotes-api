@@ -1,6 +1,6 @@
 from src import exceptions
 from src.store import reception
-from tests import base
+from tests.unit import base
 
 
 @base.TestCase.mock.patch('src.async_tasks.tasks.start_send_email')

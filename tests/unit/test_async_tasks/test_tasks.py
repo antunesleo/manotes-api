@@ -1,4 +1,4 @@
-from tests import base
+from tests.unit import base
 from src.async_tasks import tasks
 
 

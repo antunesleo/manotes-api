@@ -1,5 +1,5 @@
 from src import exceptions
-from tests import base
+from tests.unit import base
 from src.base import domain
 
 

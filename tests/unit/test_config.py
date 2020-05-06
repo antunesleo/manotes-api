@@ -1,5 +1,5 @@
 import os
-from tests import base
+from tests.unit import base
 from src import config
 from src import exceptions
 

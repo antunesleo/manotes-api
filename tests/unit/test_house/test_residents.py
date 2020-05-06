@@ -1,4 +1,4 @@
-from tests import base
+from tests.unit import base
 from src import config as config_module
 from src.house import residents
 
