@@ -1,2 +1,2 @@
-class AppRepository(object):
+class AppActiveRepository(object):
     db = None

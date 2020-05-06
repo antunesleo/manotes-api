@@ -8,7 +8,7 @@ config = config_module.get_config()
 
 
 class User(domain.Entity):
-    repository = models.User
+    active_repository = models.User
 
     def __init__(self, db_instance=None, user_dict=None):
         super(User, self).__init__(db_instance)
@@ -94,12 +94,12 @@ class User(domain.Entity):
 
     @classmethod
     def create_new(cls, user):
-        car = cls.repository.create_from_dict(user)
+        car = cls.active_repository.create_from_dict(user)
         return cls.create_with_instance(car)
 
     def __load_db_instance(self):
         if self.db_instance is None:
-            self.db_instance = self.repository.one_or_none(id=self.id)
+            self.db_instance = self.active_repository.one_or_none(id=self.id)
 
     def create_a_note(self, note_dict):
         note_dict['user_id'] = self.id

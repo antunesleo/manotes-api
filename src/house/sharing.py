@@ -8,7 +8,7 @@ config = config_module.get_config()
 
 
 class NoteSharing(domain.Entity):
-    repository = models.NoteSharing
+    active_repository = models.NoteSharing
 
     def __init__(self, db_instance):
         super(NoteSharing, self).__init__(db_instance)
@@ -30,9 +30,9 @@ class NoteSharing(domain.Entity):
             raise exceptions.NoteNotMine('Could not share note {} because it is not yours')
 
         sharing = {'giver_id': giver_id, 'note_id': note_id, 'user_id': user_id}
-        cls.repository.create_from_dict(sharing)
+        cls.active_repository.create_from_dict(sharing)
 
     @classmethod
     def list_for_user(cls, user_id):
-        db_instances = cls.repository.filter(user_id=user_id)
+        db_instances = cls.active_repository.filter(user_id=user_id)
         return [cls.create_with_instance(db_instance) for db_instance in db_instances]

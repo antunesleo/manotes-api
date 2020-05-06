@@ -3,7 +3,7 @@ import datetime
 from src import config as config_module
 from src import database, exceptions
 
-db = database.AppRepository.db
+db = database.AppActiveRepository.db
 
 config = config_module.get_config()
 

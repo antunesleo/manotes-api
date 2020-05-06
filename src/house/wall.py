@@ -6,7 +6,7 @@ config = config.get_config()
 
 
 class Note(domain.Entity):
-    repository = models.Note
+    active_repository = models.Note
 
     def __init__(self, db_instance):
         super(Note, self).__init__(db_instance)
@@ -24,7 +24,7 @@ class Note(domain.Entity):
 
     @classmethod
     def create_for_user(cls, id, user_id):
-        db_instance = cls.repository.one_or_none(id=id)
+        db_instance = cls.active_repository.one_or_none(id=id)
         if db_instance is None:
             raise exceptions.NotFound('Could not find a note with id {}'.format(id))
         if db_instance.user_id != user_id:
@@ -33,12 +33,12 @@ class Note(domain.Entity):
 
     @classmethod
     def create_new(cls, note):
-        db_instance = cls.repository.create_from_dict(note)
+        db_instance = cls.active_repository.create_from_dict(note)
         return cls.create_with_instance(db_instance)
 
     @classmethod
     def list_for_user(cls, user_id):
-        db_instances = cls.repository.filter(user_id=user_id)
+        db_instances = cls.active_repository.filter(user_id=user_id)
         notes = [cls.create_with_instance(db_instance) for db_instance in db_instances]
         return notes
 

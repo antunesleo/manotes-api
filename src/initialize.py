@@ -14,7 +14,7 @@ establish.make_worker(web_app)
 worker = establish.worker
 establish.register_tasks(worker)
 
-database.AppRepository.db = SQLAlchemy(web_app)
+database.AppActiveRepository.db = SQLAlchemy(web_app)
 
 
 # TODO: Precisa refatorar os testes

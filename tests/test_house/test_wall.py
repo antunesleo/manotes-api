@@ -5,7 +5,7 @@ from src.house import wall
 
 class NoteCreateForUserTest(base.TestCase):
 
-    @base.TestCase.mock.patch('src.house.wall.Note.repository.one_or_none')
+    @base.TestCase.mock.patch('src.house.wall.Note.active_repository.one_or_none')
     def test_should_call_repository_to_one_or_none(self, one_or_none_mock):
         db_instance_mock = self.mock.MagicMock()
         db_instance_mock.user_id = 1
@@ -13,7 +13,7 @@ class NoteCreateForUserTest(base.TestCase):
         wall.Note.create_for_user(1, 1)
         self.assertTrue(one_or_none_mock.called)
 
-    @base.TestCase.mock.patch('src.house.wall.Note.repository.one_or_none')
+    @base.TestCase.mock.patch('src.house.wall.Note.active_repository.one_or_none')
     def test_should_call_return_instance(self, one_or_none_mock):
         db_instance_mock = self.mock.MagicMock()
         db_instance_mock.user_id = 1
@@ -21,13 +21,13 @@ class NoteCreateForUserTest(base.TestCase):
         created_note = wall.Note.create_for_user(1, 1)
         self.assertTrue(isinstance(created_note, wall.Note))
 
-    @base.TestCase.mock.patch('src.house.wall.Note.repository.one_or_none')
+    @base.TestCase.mock.patch('src.house.wall.Note.active_repository.one_or_none')
     def test_should_return_not_found_if_id_dont_exists(self, one_or_none_mock):
         one_or_none_mock.return_value = None
         with self.assertRaises(exceptions.NotFound):
             wall.Note.create_for_user(1, 1)
 
-    @base.TestCase.mock.patch('src.house.wall.Note.repository.one_or_none')
+    @base.TestCase.mock.patch('src.house.wall.Note.active_repository.one_or_none')
     def test_should_raises_not_mine_if_found_but_user_id_is_different(self, one_or_none_mock):
         db_instance_mock = self.mock.MagicMock()
         db_instance_mock.user_id = 1
@@ -38,13 +38,13 @@ class NoteCreateForUserTest(base.TestCase):
 
 class NoteCreateNewTest(base.TestCase):
 
-    @base.TestCase.mock.patch('src.house.wall.Note.repository.create_from_dict')
+    @base.TestCase.mock.patch('src.house.wall.Note.active_repository.create_from_dict')
     def test_should_call_repository_to_create_from_dict(self, create_from_dict_mock):
         db_instance_mock = self.mock.MagicMock()
         wall.Note.create_new(db_instance_mock)
         self.assertTrue(create_from_dict_mock.called)
 
-    @base.TestCase.mock.patch('src.house.wall.Note.repository.create_from_dict')
+    @base.TestCase.mock.patch('src.house.wall.Note.active_repository.create_from_dict')
     def test_should_return_created_instance(self, create_from_dict_mock):
         instance_mock = self.mock.MagicMock()
         create_from_dict_mock.return_value = instance_mock
@@ -54,12 +54,12 @@ class NoteCreateNewTest(base.TestCase):
 
 class NoteListForUserTest(base.TestCase):
 
-    @base.TestCase.mock.patch('src.house.wall.Note.repository.filter')
+    @base.TestCase.mock.patch('src.house.wall.Note.active_repository.filter')
     def test_list_for_user_should_call_repository_to_filter(self, filter_mock):
         wall.Note.list_for_user(1)
         self.assertTrue(filter_mock.called)
 
-    @base.TestCase.mock.patch('src.house.wall.Note.repository.filter')
+    @base.TestCase.mock.patch('src.house.wall.Note.active_repository.filter')
     def test_list_for_user_should_return_list(self, filter_mock):
         filter_mock.return_value = []
         notes = wall.Note.list_for_user(1)
