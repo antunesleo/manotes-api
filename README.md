@@ -69,6 +69,18 @@ service_name: manotes
 ```
 
 #### Running the tests
+
+Create test database:
+```
+$ sudo su postgres
+$ psql
+$ CREATE DATABASE manotes_test
+$ ALTER DATABASE manotes_test OWNER TO manotes;
+$ \q
+$ exit
+```
+
+Run them all:
 ```
 load-env-test
 python -m testtools.run
