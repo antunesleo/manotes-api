@@ -1,6 +1,6 @@
 from src import exceptions
 from src.async_tasks import tasks
-from src.house import services
+from src.house import services_locator
 from src.security import security_services
 
 
@@ -34,7 +34,7 @@ class Clerk(object):
         self.__create_credentials()
         self.__validate_email()
 
-        user_factory = services.ResidentsService.pass_me_the_user_factory()
+        user_factory = services_locator.ResidentsService.pass_me_the_user_factory()
         self.__created_user = user_factory.create_new()
 
         self.__start_to_send_confirmation_email()

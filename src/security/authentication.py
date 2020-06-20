@@ -3,7 +3,7 @@ from flask import g
 from src import exceptions
 from src.base.services import DomainService
 from src.security import security_services
-from src.house.services import ResidentsService
+from src.house.services_locator import ResidentsService
 
 
 class AuthService(DomainService):

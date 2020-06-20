@@ -4,7 +4,7 @@ from flask_restful import Resource
 from flask import g, Response, request
 from src import exceptions
 from src.security import authentication
-from src.house.services import ReceptionService
+from src.house.services_locator import ReceptionService
 
 
 

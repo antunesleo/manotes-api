@@ -1,39 +1,23 @@
 from importlib import import_module
+from abc import ABC
+
+from src import exceptions
 
 
-class ClassProperty(object):
-    def __init__(self, getter):
-        self.getter = getter
+class ModuleLoader(object):
 
-    def __get__(self, instance, owner):
-        return self.getter(owner)
-
-
-def classproperty(func):
-    return ClassProperty(func)
-
-
-class DIPService(object):
-    _module = None
-
-    class InvalidDomain(Exception):
-        pass
-
-    @classproperty
-    def module(cls):
-        if cls._module is None:
-            raise cls.InvalidDomain('You should use a specific service implementation')
+    def load(self, module):
+        if module is None:
+            raise exceptions.InvalidDomain('You should use a specific service implementation')
         try:
-            return import_module(cls._module)
+            return import_module(module)
         except Exception as ex:
             pass
 
 
-class DomainService(object):
+class AbsServiceLocator(ABC):
+    module_loader = ModuleLoader
 
-    @classmethod
-    def create(cls):
-        return cls()
 
-class InfraService(object):
+class AbsApplicationService(ABC):
     pass

@@ -1,7 +1,15 @@
 from src import exceptions
 
 
+class Actor(object):
+    pass
+
+
 class Entity(object):
+    pass
+
+
+class Aggregate(object):
     repository = None
 
     def __init__(self, db_instance):

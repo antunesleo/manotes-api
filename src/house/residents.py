@@ -1,13 +1,13 @@
 import datetime
-from src.house.services import WallService, SharingService
-from src.central_files.services import ArchiveService
-from src.base import domain
+
+from src.house.application_services import NoteCreator, NoteDeleter, NoteFinder, NoteUpdater, AvatarChanger, NoteSharer, NoteLister, SharedNotesLister
+from src.base.domain import Actor, Aggregate
 from src import models, config as config_module
 
 config = config_module.get_config()
 
 
-class User(domain.Entity):
+class User(Actor, Aggregate):
     active_repository = models.User
 
     def __init__(self, db_instance=None, user_dict=None):
@@ -33,17 +33,15 @@ class User(domain.Entity):
     @property
     def notes(self):
         if self.__notes is None:
-            note_factory = WallService.pass_me_the_note_factory()
-            self.__notes = note_factory.list_for_user(user_id=self.id)
+            note_lister = NoteLister(self)
+            self.__notes = note_lister.list()
         return self.__notes
 
     @property
     def shared_notes(self):
         if self.__shared_notes is None:
-            note_sharing_factory = SharingService.pass_me_the_note_sharing_factory()
-            notes_sharing = note_sharing_factory.list_for_user(self.id)
-            self.__shared_notes = [WallService.create_note_for_user(note_sharing.user_id, note_sharing.note_id)
-                                  for note_sharing in notes_sharing]
+            shared_notes_lister = SharedNotesLister(self)
+            self.__shared_notes = shared_notes_lister.list()
         return self.__shared_notes
 
     @property
@@ -102,23 +100,20 @@ class User(domain.Entity):
             self.db_instance = self.active_repository.one_or_none(id=self.id)
 
     def create_a_note(self, note_dict):
-        note_dict['user_id'] = self.id
-        note_factory = WallService.pass_me_the_note_factory()
-        note = note_factory.create_new(note_dict)
-        return note.as_dict()
+        note_creator = NoteCreator(self)
+        note_creator.create(note_dict)
 
-    def delete_a_note(self, id):
-        note = WallService.create_note_for_user(id, self.id)
-        note.delete()
+    def delete_a_note(self, note_id):
+        note_deleter = NoteDeleter(self)
+        note_deleter.delete(note_id)
 
-    def get_a_note(self, id):
-        note = WallService.create_note_for_user(id, self.id)
-        return note.as_dict()
+    def get_a_note(self, note_id):
+        note_finder = NoteFinder(self)
+        return note_finder.find(note_id)
 
-    def update_a_note(self, id, note_changes):
-        note = WallService.create_note_for_user(id, self.id)
-        note.update(note_changes)
-        return note.as_dict()
+    def update_a_note(self, note_id, note_changes_dict):
+        note_updater = NoteUpdater(self)
+        return note_updater.update(note_id, note_changes_dict)
 
     def update(self, payload):
         self.__load_db_instance()
@@ -127,24 +122,15 @@ class User(domain.Entity):
         self.db_instance.update_from_dict(payload)
 
     def change_avatar(self, files):
-        self.__load_db_instance()
-        avatar_file = files['avatar']
-        temp_file_path = '{}/{}-{}'.format(config.TEMP_PATH, self.id, 'avatar.png')
-        avatar_file.save(temp_file_path)
-        scribe = ArchiveService.create_scribe_factory_for_user(self.id)
-        image_path = scribe.save(temp_file_path)
-        self.db_instance.avatar_path = image_path
-        self.db_instance.save_db()
+        avatar_changer = AvatarChanger(self)
+        avatar_changer.change_avatar(files)
 
     def share_a_note(self, note_id, user_id):
-        note = WallService.create_note_for_user(note_id, self.id)
-        note_sharing_factory = SharingService.pass_me_the_note_sharing_factory()
-        note_sharing_factory.share(self.id, note.id, user_id)
-        note.mark_as_shared()
+        note_sharer = NoteSharer(self)
+        note_sharer.share(note_id, user_id)
 
     def as_dict(self, full=False):
         if full:
-            # TODO: Precisa fazer teste
             return {
                 "id": self.id,
                 "username": self.username,

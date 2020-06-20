@@ -5,8 +5,8 @@ from src.base import domain
 config = config.get_config()
 
 
-class Note(domain.Entity):
-    active_repository = models.Note
+class Note(domain.Aggregate):
+    __active_repository = models.Note
 
     def __init__(self, db_instance):
         super(Note, self).__init__(db_instance)
@@ -23,8 +23,8 @@ class Note(domain.Entity):
         return self.db_instance.content
 
     @classmethod
-    def create_for_user(cls, id, user_id):
-        db_instance = cls.active_repository.one_or_none(id=id)
+    def create_with_id(cls, id, user_id):
+        db_instance = cls.__active_repository.one_or_none(id=id)
         if db_instance is None:
             raise exceptions.NotFound('Could not find a note with id {}'.format(id))
         if db_instance.user_id != user_id:
@@ -32,13 +32,13 @@ class Note(domain.Entity):
         return cls(db_instance=db_instance)
 
     @classmethod
-    def create_new(cls, note):
-        db_instance = cls.active_repository.create_from_dict(note)
+    def add(cls, note):
+        db_instance = cls.__active_repository.create_from_dict(note)
         return cls.create_with_instance(db_instance)
 
     @classmethod
-    def list_for_user(cls, user_id):
-        db_instances = cls.active_repository.filter(user_id=user_id)
+    def list(cls, user_id):
+        db_instances = cls.__active_repository.filter(user_id=user_id)
         notes = [cls.create_with_instance(db_instance) for db_instance in db_instances]
         return notes
 
