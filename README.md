@@ -16,7 +16,7 @@ If you prefer, you can also use Docker to get your copy running.
 * Linux
 * Python 3+
 * Pip3
-* Virtualenvwrapper (optional but recommended)
+* Virtual Env (optional but recommended)
 * PostgreSQL 10+ 
 
 ### Installing
@@ -25,8 +25,8 @@ Installing requirements
 ```
 $ sudo apt-get install redis-server
 $ git clone git@github.com:antunesleo/manotes-api.git
-$ mkvirtualenv manotes-api (Optional)
-$ workon manotes-api (Optional)
+$ python3 -m venv manotes-api (optional)
+$ source manotes-api/bin/activate (optional)
 $ pip install -r requirements.txt
 $ pip install -r requirements_dev.txt
 ```
