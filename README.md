@@ -94,6 +94,7 @@ Preparing the Environment Variables
 
 ```bash
 $ cp .env.sample.docker .env
+$ cp .env.postgres.sample .env
 ```
 
 You can also copy using your file browser, if you prefer.
