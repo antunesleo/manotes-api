@@ -35,7 +35,7 @@ class Clerk(object):
         self.__validate_email()
 
         user_factory = services.ResidentsService.pass_me_the_user_factory()
-        self.__created_user = user_factory.create_new()
+        self.__created_user = user_factory.create_new(user)
 
         self.__start_to_send_confirmation_email()
         return self.__created_user.as_dict()
