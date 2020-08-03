@@ -15,12 +15,12 @@ class HouseLocator(AbsServiceLocator):
         return module.Note.create_for_user(id, user_id)
 
     @classmethod
-    def pass_me_the_note_factory(cls):
+    def pass_me_the_note_class(cls):
         module = cls.module_loader.load('src.house.wall')
         return module.Note
 
     @classmethod
-    def pass_me_the_user_factory(cls):
+    def pass_me_the_user_class(cls):
         module = cls.module_loader.load('src.house.residents')
         return module.User
 
@@ -30,6 +30,6 @@ class HouseLocator(AbsServiceLocator):
         return module.User.create_with_id(user_id)
 
     @classmethod
-    def pass_me_the_note_sharing_factory(cls):
+    def pass_me_the_note_sharing_class(cls):
         module = cls.module_loader.load('src.house.sharing')
         return module.NoteSharing

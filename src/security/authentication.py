@@ -10,13 +10,13 @@ class AuthService(AbsDomainService):
 
     @classmethod
     def authenticate_with_credentials(cls, credentials):
-        user_factory = HouseLocator.pass_me_the_user_factory()
+        user_class = HouseLocator.pass_me_the_user_class()
         username_or_email = credentials['username_or_email']
         try:
             if security_services.ValidationService.is_email(username_or_email):
-                user = user_factory.create_with_email(username_or_email)
+                user = user_class.create_with_email(username_or_email)
             else:
-                user = user_factory.create_with_username(username_or_email)
+                user = user_class.create_with_username(username_or_email)
             encoded_token = security_services.EncodingService.encode(user.as_dict(full=True), user.token)
             user.encoded_token = encoded_token
         except exceptions.NotFound:
@@ -26,7 +26,7 @@ class AuthService(AbsDomainService):
     @classmethod
     def check_authorization(cls, user_email, encoded_token):
         try:
-            user_class = HouseLocator.pass_me_the_user_factory()
+            user_class = HouseLocator.pass_me_the_user_class()
             user = user_class.create_with_email(user_email)
         except exceptions.NotFound:
             g.authenticated = False

@@ -11,11 +11,11 @@ class NoteCreator(ApplicationService):
 
     def __init__(self, user):
         self.__user = user
-        self.__note_factory = HouseLocator.pass_me_the_note_factory()
+        self.__note_class = HouseLocator.pass_me_the_note_class()
 
     def create(self, note_dict):
         note_dict['user_id'] = self.__user.id
-        note = self.__note_factory.add(note_dict)
+        note = self.__note_class.add(note_dict)
         return note.as_dict()
 
 
@@ -54,7 +54,7 @@ class AvatarChanger(ApplicationService):
 
     def __init__(self, user):
         self.__user = user
-        self.__scribe = ArchiveService.create_scribe_factory_for_user(user.id)
+        self.__scribe = ArchiveService.create_scribe_class_for_user(user.id)
 
     def change_avatar(self, files):
         self.__user.__load_db_instance()
@@ -70,11 +70,11 @@ class NoteSharer(ApplicationService):
 
     def __init__(self, user):
         self.__user = user
-        self.__note_sharing_factory = HouseLocator.pass_me_the_note_sharing_factory()
+        self.__note_sharing_class = HouseLocator.pass_me_the_note_sharing_class()
 
     def share(self, note_id, user_id):
         note = HouseLocator.create_note_for_user(note_id, self.__user.id)
-        self.__note_sharing_factory.share(self.__user.id, note.id, user_id)
+        self.__note_sharing_class.share(self.__user.id, note.id, user_id)
         note.mark_as_shared()
 
 
@@ -82,18 +82,18 @@ class NoteLister(ApplicationService):
 
     def __init__(self, user):
         self.__user = user
-        self.__note_factory = HouseLocator.pass_me_the_note_factory()
+        self.__note_class = HouseLocator.pass_me_the_note_class()
 
     def list(self):
-        return self.__note_factory.list(user_id=self.__user.id)
+        return self.__note_class.list(user_id=self.__user.id)
 
 
 class SharedNotesLister(ApplicationService):
 
     def __init__(self, user):
         self.__user = user
-        self.__notes_sharing_factory = HouseLocator.pass_me_the_note_sharing_factory()
+        self.__notes_sharing_class = HouseLocator.pass_me_the_note_sharing_class()
 
     def list(self, ):
-        shareds = self.__notes_sharing_factory.list_for_user(self.__user.id)
+        shareds = self.__notes_sharing_class.list_for_user(self.__user.id)
         return [HouseLocator.create_note_for_user(shared.user_id, shared.note_id) for shared in shareds]

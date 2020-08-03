@@ -30,9 +30,9 @@ class ClerkCreateAccountTest(base.TestCase):
         start_send_email_mock.start_send_email.return_value = 10
         user_mock = self.mock.MagicMock()
         user_mock.as_dict.return_value = {}
-        user_factory_mock = self.mock.MagicMock()
-        user_factory_mock.create_new.return_value = user_mock
-        residents_service_mock.pass_me_the_user_factory.return_value = user_factory_mock
+        user_class_mock = self.mock.MagicMock()
+        user_class_mock.create_new.return_value = user_mock
+        residents_service_mock.pass_me_the_user_class.return_value = user_class_mock
         is_email_mock.return_value = True
         payload = {'username': 'breno', 'email': 'breno@breno.com', 'password': 12345}
         created_user = self.clerk.create_user_account(payload)
@@ -47,9 +47,9 @@ class ClerkCreateAccountTest(base.TestCase):
         start_send_email_mock.start_send_email.return_value = 10
         user_mock = self.mock.MagicMock()
         user_mock.as_dict.return_value = {}
-        user_factory_mock = self.mock.MagicMock()
-        user_factory_mock.create_new.return_value = user_mock
-        residents_service_mock.pass_me_the_user_factory.return_value = user_factory_mock
+        user_class_mock = self.mock.MagicMock()
+        user_class_mock.create_new.return_value = user_mock
+        residents_service_mock.pass_me_the_user_class.return_value = user_class_mock
         is_email_mock.return_value = True
         payload = {'username': 'breno', 'email': 'breno@breno.com', 'password': 12345}
         self.clerk.create_user_account(payload)
