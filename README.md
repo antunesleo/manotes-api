@@ -142,19 +142,6 @@ coveralls
 $ docker-compose up -d
 ```
 
-## Features
-| Features        | Description   |
-| -------------   |:-------------:| 
-| Login | [POST] in 'api/login' endpoint, unauthenticated users can login |
-| Create Account  | [POST] in endpoint 'api/users' users can create account passing email, username and password| 
-| Update Account  | [PUT] in endpoint 'api/users' authenticated users can update account infos like email and/or username| 
-| Update Avatar   | [PUT] in endpoint 'api/users/me/avatar' authenticated users can update avatar passing an image file|
-| Create Note     | [POST] in endpoint 'api/users/me/notes' authenticated user can create a note with name, content and color |
-| Update Note     | [PUT] in endpoint 'api/users/me/notes' authenticated user can update name, content and color from a note|
-| Get Note        | [GET] in endpoint 'api/users/me/notes/<note_id>' authenticated user can list all notes or get a specific note if note_id is passed |
-| Delete Note     | [DELETE] in endpoint 'api/users/me/notes/<note_id>' authenticated user can delete a note |
-
-
 ## Built With
 
 * [Alembic](http://alembic.zzzcomputing.com/en/latest/) - lightweight database migration tool for usage with the SQLAlchemy Database Toolkit
