@@ -3,13 +3,13 @@ import secrets
 
 import jwt
 
-from src.base.services import InfraService
+from src.base.services import AbsInfraService
 from passlib.hash import pbkdf2_sha256
 from validate_email import validate_email
 from src import exceptions
 
 
-class HashService(InfraService):
+class HashService(AbsInfraService):
 
     @classmethod
     def hash(cls, word):
@@ -20,21 +20,21 @@ class HashService(InfraService):
         return pbkdf2_sha256.verify(string, hashed_string)
 
 
-class TokenService(InfraService):
+class TokenService(AbsInfraService):
 
     @classmethod
     def generate(cls, size=40):
         return secrets.token_hex(size)
 
 
-class ValidationService(InfraService):
+class ValidationService(AbsInfraService):
 
     @classmethod
     def is_email(cls, email):
         return validate_email(email)
 
 
-class EncodingService(InfraService):
+class EncodingService(AbsInfraService):
 
     @classmethod
     def encode(cls, dict_to_encode, secret):

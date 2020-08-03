@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 from flask import g
 from src import exceptions
-from src.base.services import DomainService
+from src.base.services import AbsDomainService
 from src.security import security_services
-from src.house.services_locator import ResidentsService
+from src.house.services_locator import HouseLocator
 
 
-class AuthService(DomainService):
+class AuthService(AbsDomainService):
 
     @classmethod
     def authenticate_with_credentials(cls, credentials):
-        user_factory = ResidentsService.pass_me_the_user_factory()
+        user_factory = HouseLocator.pass_me_the_user_factory()
         username_or_email = credentials['username_or_email']
         try:
             if security_services.ValidationService.is_email(username_or_email):
@@ -26,7 +26,7 @@ class AuthService(DomainService):
     @classmethod
     def check_authorization(cls, user_email, encoded_token):
         try:
-            user_class = ResidentsService.pass_me_the_user_factory()
+            user_class = HouseLocator.pass_me_the_user_factory()
             user = user_class.create_with_email(user_email)
         except exceptions.NotFound:
             g.authenticated = False

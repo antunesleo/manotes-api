@@ -4,8 +4,7 @@ from flask_restful import Resource
 from flask import g, Response, request
 from src import exceptions
 from src.security import authentication
-from src.house.services_locator import ReceptionService
-
+from src.house.services_locator import HouseLocator
 
 
 def login_required(f):
@@ -47,7 +46,7 @@ class ResourceBase(Resource):
     @property
     def clerk(self):
         if self._clerk is None:
-            self._clerk = ReceptionService.create_clerk()
+            self._clerk = HouseLocator.create_clerk()
         return self._clerk
 
     @property

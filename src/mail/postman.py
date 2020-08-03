@@ -12,6 +12,7 @@ class Postman(object):
     @classmethod
     def send_confirmation_email(cls, name, from_address, to_address, subject):
         try:
+            return
             msg = MIMEMultipart()
             msg['From'] = from_address
             msg['To'] = to_address

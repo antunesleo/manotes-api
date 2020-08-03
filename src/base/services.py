@@ -16,8 +16,16 @@ class ModuleLoader(object):
 
 
 class AbsServiceLocator(ABC):
-    module_loader = ModuleLoader
+    module_loader = ModuleLoader()
 
 
 class AbsApplicationService(ABC):
+    pass
+
+
+class AbsDomainService(ABC):
+    pass
+
+
+class AbsInfraService(ABC):
     pass

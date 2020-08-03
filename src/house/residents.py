@@ -88,7 +88,7 @@ class User(Actor, Aggregate):
 
     @classmethod
     def create_with_dict(cls, user_dict):
-            return cls(user_dict=user_dict)
+        return cls(user_dict=user_dict)
 
     @classmethod
     def create_new(cls, user):

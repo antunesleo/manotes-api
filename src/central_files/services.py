@@ -1,9 +1,10 @@
-from src.base.services import DIPService
+from src.base.services import AbsServiceLocator
 
 
-class ArchiveService(DIPService):
+class ArchiveService(AbsServiceLocator):
     _module = 'src.central_files.archive'
 
     @classmethod
     def create_scribe_factory_for_user(cls, user_id):
-        return cls.module.ScribeFactory.create_with_environment(user_id, router='avatar')
+        module = cls.module_loader.load(cls._module)
+        return module.ScribeFactory.create_with_environment(user_id, router='avatar')
