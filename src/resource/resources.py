@@ -212,8 +212,8 @@ class NoteResource(ResourceBase):
 
         @login_required
         def post(self):
-            note = self.me.create_a_note(self.payload)
-            return self.response(note.as_dict())
+            note_dict = self.me.create_a_note(self.payload)
+            return self.response(note_dict)
 
         @login_required
         def put(self, note_id):

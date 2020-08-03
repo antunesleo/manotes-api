@@ -15,7 +15,7 @@ class NoteCreator(ApplicationService):
 
     def create(self, note_dict):
         note_dict['user_id'] = self.__user.id
-        note = self.__note_factory.create_new(note_dict)
+        note = self.__note_factory.add(note_dict)
         return note.as_dict()
 
 
@@ -85,7 +85,7 @@ class NoteLister(ApplicationService):
         self.__note_factory = HouseLocator.pass_me_the_note_factory()
 
     def list(self):
-        return self.__note_factory.list_for_user(user_id=self.__user.id)
+        return self.__note_factory.list(user_id=self.__user.id)
 
 
 class SharedNotesLister(ApplicationService):

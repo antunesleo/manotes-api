@@ -101,7 +101,7 @@ class User(Actor, Aggregate):
 
     def create_a_note(self, note_dict):
         note_creator = NoteCreator(self)
-        note_creator.create(note_dict)
+        return note_creator.create(note_dict)
 
     def delete_a_note(self, note_id):
         note_deleter = NoteDeleter(self)
