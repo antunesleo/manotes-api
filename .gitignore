@@ -8,3 +8,4 @@ htmlcov
 .coveralls.yml
 
 data
+manotes-api

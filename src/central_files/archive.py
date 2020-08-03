@@ -16,7 +16,9 @@ class ScribeFactory(object):
         if config.DEVELOPMENT:
             return LocalScribe.create_with_router_for_user(user_id, router)
         if config.PRODUCTION:
-            return S3Scribe.create_with_router_for_user(user_id, router)
+            # INFO: Disabled because I don't have an AWS account
+            # return S3Scribe.create_with_router_for_user(user_id, router)
+            return LocalScribe.create_with_router_for_user(user_id, router)
         raise exceptions.InvalidEnvironment('Could  not instantiate a file class '
                                  'because the environment config is not development or production')
 
