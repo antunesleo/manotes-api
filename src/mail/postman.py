@@ -29,7 +29,8 @@ class Postman(object):
             server.starttls()
             server.login(config.SMTP_USERNAME, config.SMTP_PASSWORD)
             text = msg.as_string()
-            server.sendmail(from_address, to_address, text)
+            # Info: Disabled because I dont have an SMTP server
+            # server.sendmail(from_address, to_address, text)
             server.quit()
         except Exception as ex:
             print('ERROR: Oooops! The postman could not send the email: {}'.format(ex))
