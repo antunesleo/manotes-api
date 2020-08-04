@@ -1,6 +1,6 @@
 import datetime
 
-from src.house.application_services import NoteCreator, NoteDeleter, NoteFinder, NoteUpdater, AvatarChanger, NoteLister
+from src.house.application_services import AvatarChanger, NoteService
 from src.base.domain import Actor, Aggregate
 from src import models, config as config_module
 
@@ -13,7 +13,6 @@ class User(Actor, Aggregate):
     def __init__(self, db_instance=None, user_dict=None):
         super(User, self).__init__(db_instance)
         self.__notes = None
-        self.__shared_notes = None
 
         if db_instance:
             self.id = db_instance.id
@@ -33,8 +32,8 @@ class User(Actor, Aggregate):
     @property
     def notes(self):
         if self.__notes is None:
-            note_lister = NoteLister(self)
-            self.__notes = note_lister.list()
+            note_service = NoteService()
+            self.__notes = note_service.list(self.id)
         return self.__notes
 
     @property
@@ -93,20 +92,20 @@ class User(Actor, Aggregate):
             self.db_instance = self.active_repository.one_or_none(id=self.id)
 
     def create_a_note(self, note_dict):
-        note_creator = NoteCreator(self)
-        return note_creator.create(note_dict)
+        note_service = NoteService()
+        return note_service.create(self.id, note_dict)
 
     def delete_a_note(self, note_id):
-        note_deleter = NoteDeleter(self)
-        note_deleter.delete(note_id)
+        note_service = NoteService()
+        note_service.delete(self.id,note_id)
 
     def get_a_note(self, note_id):
-        note_finder = NoteFinder(self)
-        return note_finder.find(note_id)
+        note_service = NoteService()
+        return note_service.find(self.id, note_id)
 
     def update_a_note(self, note_id, note_changes_dict):
-        note_updater = NoteUpdater(self)
-        return note_updater.update(note_id, note_changes_dict)
+        note_service = NoteService()
+        return note_service.update(self.id, note_id, note_changes_dict)
 
     def update(self, payload):
         self.load_db_instance()

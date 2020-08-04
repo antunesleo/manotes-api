@@ -11,8 +11,7 @@ class NoteBuilder(object):
             'name': 'Note 1',
             'user_id': 1,
             'content': 'This is a note. A note have to have a context. But this one, does not have one!',
-            'color': '#eeeeee',
-            'shared': False
+            'color': '#eeeeee'
         }
         return self
 

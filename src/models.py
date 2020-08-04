@@ -99,4 +99,3 @@ class Note(db.Model, AbstractModel):
     name = db.Column(db.String)
     content = db.Column(db.String)
     color = db.Column(db.String)
-    shared = db.Column(db.Boolean, default=False)

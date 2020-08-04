@@ -7,47 +7,31 @@ class ApplicationService(object):
     pass
 
 
-class NoteCreator(ApplicationService):
+class NoteService(ApplicationService):
 
-    def __init__(self, user):
-        self.__user = user
+    def __init__(self):
         self.__note_class = HouseLocator.pass_me_the_note_class()
 
-    def create(self, note_dict):
-        note_dict['user_id'] = self.__user.id
+    def create(self, user_id, note_dict):
+        note_dict['user_id'] = user_id
         note = self.__note_class.add(note_dict)
         return note.as_dict()
 
-
-class NoteDeleter(ApplicationService):
-
-    def __init__(self, user):
-        self.__user = user
-
-    def delete(self, note_id):
-        note = HouseLocator.create_note_for_user(note_id, self.__user.id)
+    def delete(self, user_id, note_id):
+        note = HouseLocator.create_note_for_user(note_id, user_id)
         note.delete()
 
-
-class NoteFinder(ApplicationService):
-
-    def __init__(self, user):
-        self.__user = user
-
-    def find(self, note_id):
-        note = HouseLocator.create_note_for_user(note_id, self.__user.id)
+    def find(self, note_id, user_id):
+        note = HouseLocator.create_note_for_user(note_id, user_id)
         return note.as_dict()
 
-
-class NoteUpdater(ApplicationService):
-
-    def __init__(self, user):
-        self.__user = user
-
-    def update(self, note_id, note_changes_dict):
-        note = HouseLocator.create_note_for_user(note_id, self.__user.id)
+    def update(self, user_id, note_id, note_changes_dict):
+        note = HouseLocator.create_note_for_user(note_id, user_id)
         note.update(note_changes_dict)
         return note.as_dict()
+
+    def list(self, user_id):
+        return self.__note_class.list(user_id=user_id)
 
 
 class AvatarChanger(ApplicationService):
@@ -64,13 +48,3 @@ class AvatarChanger(ApplicationService):
         image_path = self.__scribe.save(temp_file_path)
         self.__user.db_instance.avatar_path = image_path
         self.__user.db_instance.save_db()
-
-
-class NoteLister(ApplicationService):
-
-    def __init__(self, user):
-        self.__user = user
-        self.__note_class = HouseLocator.pass_me_the_note_class()
-
-    def list(self):
-        return self.__note_class.list(user_id=self.__user.id)

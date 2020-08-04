@@ -23,6 +23,5 @@ class NoteTest(base.TestCase):
             self.assertEqual(note_dict['name'], note.name)
             self.assertEqual(note_dict['content'], note.content)
             self.assertEqual(note_dict['color'], note.color)
-            self.assertEqual(note_dict['shared'], note.shared)
             self.assertIsNotNone(note.creation_date)
             self.assertIsNone(note.update_date)
