@@ -84,50 +84,6 @@ class UserNotesTest(base.TestCase):
         note_class.list_for_user.assert_called_once()
         self.assertEqual(notes, [])
 
-
-class UserSharedNotesTest(base.TestCase):
-
-    @base.TestCase.mock.patch('src.house.residents.SharingService')
-    def test_should_call_note_sharing_service_to_list_for_user_if_not_cached(self, sharing_service_mock):
-        note_sharing_class_mock = self.mock.MagicMock()
-        note_sharing_class_mock.list_for_user.return_value = []
-        sharing_service_mock.pass_me_the_note_sharing_class.return_value = note_sharing_class_mock
-        db_instance = self.mock.MagicMock()
-        db_instance.id = 1
-        user = residents.User(db_instance=db_instance)
-        user.shared_notes
-        self.assertTrue(note_sharing_class_mock.list_for_user.called)
-        note_sharing_class_mock.list_for_user.assert_called_with(1)
-
-    @base.TestCase.mock.patch('src.house.residents.WallService')
-    @base.TestCase.mock.patch('src.house.residents.SharingService.pass_me_the_note_sharing_class')
-    def test_should_call_wall_service_to_create_for_user_if_not_cached(self, pass_me_the_note_sharing_class_mock, wall_service_mock):
-        note_sharing_1 = self.mock.MagicMock(user_id=1, note_id=10)
-        note_sharing_2 = self.mock.MagicMock(user_id=1, note_id=20)
-        note_sharing_class_mock = self.mock.MagicMock()
-        note_sharing_class_mock.list_for_user.return_value = [note_sharing_1, note_sharing_2]
-        pass_me_the_note_sharing_class_mock.return_value = note_sharing_class_mock
-        db_instance = self.mock.MagicMock()
-        db_instance.id = 1
-        user = residents.User(db_instance=db_instance)
-        user.shared_notes
-        wall_service_mock.create_note_for_user.assert_called_with(1, 20) # TODO: How to test this better?
-
-    @base.TestCase.mock.patch('src.house.residents.WallService')
-    @base.TestCase.mock.patch('src.house.residents.SharingService.pass_me_the_note_sharing_class')
-    def test_should_return_shared_notes_if_cached(self, pass_me_the_note_sharing_class_mock, wall_service_mock):
-        note_sharing_class_mock = self.mock.MagicMock()
-        note_sharing_class_mock.list_for_user.return_value = []
-        pass_me_the_note_sharing_class_mock.return_value = note_sharing_class_mock
-        db_instance = self.mock.MagicMock()
-        db_instance.id = 1
-        user = residents.User(db_instance=db_instance)
-        user.shared_notes
-        shared_notes = user.shared_notes
-        self.assertEqual(shared_notes, [])
-        note_sharing_class_mock.list_for_user.assert_called_once()
-
-
 class UserTokenTest(base.TestCase):
 
     def setUp(self):
@@ -487,39 +443,3 @@ class UserChangeAvatarTest(base.TestCase):
         self.user.change_avatar(files)
         self.assertTrue(self.user.db_instance.save_db.called)
 
-
-class UserNoteSharing(base.TestCase):
-
-    def setUp(self):
-        db_instance_mock = self.mock.MagicMock()
-        db_instance_mock.id = 1
-        self.user = residents.User(db_instance_mock)
-
-    @base.mock.patch('src.house.services.SharingService.pass_me_the_note_sharing_class')
-    @base.mock.patch('src.house.services.WallService.create_note_for_user')
-    def test_should_call_wall_service_to_create_for_user(self, create_note_for_user_mock, pass_me_the_note_sharing_class_mock):
-        self.user.share_a_note(note_id=5, user_id=2)
-        create_note_for_user_mock.assert_called_with(5, 1)
-
-    @base.mock.patch('src.house.services.WallService.create_note_for_user')
-    @base.mock.patch('src.house.services.ResidentsService.create_user_with_id')
-    @base.mock.patch('src.house.services.SharingService.pass_me_the_note_sharing_class')
-    def test_should_call_share_service_to_share_a_note(self, pass_me_the_note_sharing_class_mock, create_user_with_id_mock, create_note_for_user_mock):
-        sharing_class_mock = self.mock.MagicMock()
-        pass_me_the_note_sharing_class_mock.return_value = sharing_class_mock
-
-        note_mock = self.mock.MagicMock(id=5)
-        create_note_for_user_mock.return_value = note_mock
-        self.user.share_a_note(note_id=5, user_id=2)
-        sharing_class_mock.share.assert_called_with(1, 5, 2)
-
-    @base.mock.patch('src.house.services.WallService.create_note_for_user')
-    @base.mock.patch('src.house.services.ResidentsService.create_user_with_id')
-    @base.mock.patch('src.house.services.SharingService.pass_me_the_note_sharing_class')
-    def test_should_call_note_instance_to_be_marked_as_shared(self, pass_me_the_note_sharing_class_mock, create_user_with_id_mock, create_note_for_user_mock):
-        sharing_class_mock = self.mock.MagicMock()
-        pass_me_the_note_sharing_class_mock.return_value = sharing_class_mock
-        note_mock = self.mock.MagicMock()
-        create_note_for_user_mock.return_value = note_mock
-        self.user.share_a_note(note_id=5, user_id=2)
-        self.assertTrue(note_mock.mark_as_shared.called)

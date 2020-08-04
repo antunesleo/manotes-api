@@ -28,8 +28,3 @@ class HouseLocator(AbsServiceLocator):
     def create_user_with_id(cls, user_id):
         module = cls.module_loader.load('src.house.residents')
         return module.User.create_with_id(user_id)
-
-    @classmethod
-    def pass_me_the_note_sharing_class(cls):
-        module = cls.module_loader.load('src.house.sharing')
-        return module.NoteSharing

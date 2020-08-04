@@ -1,6 +1,6 @@
 import datetime
 
-from src.house.application_services import NoteCreator, NoteDeleter, NoteFinder, NoteUpdater, AvatarChanger, NoteSharer, NoteLister, SharedNotesLister
+from src.house.application_services import NoteCreator, NoteDeleter, NoteFinder, NoteUpdater, AvatarChanger, NoteLister
 from src.base.domain import Actor, Aggregate
 from src import models, config as config_module
 
@@ -36,13 +36,6 @@ class User(Actor, Aggregate):
             note_lister = NoteLister(self)
             self.__notes = note_lister.list()
         return self.__notes
-
-    @property
-    def shared_notes(self):
-        if self.__shared_notes is None:
-            shared_notes_lister = SharedNotesLister(self)
-            self.__shared_notes = shared_notes_lister.list()
-        return self.__shared_notes
 
     @property
     def token(self):
@@ -95,7 +88,7 @@ class User(Actor, Aggregate):
         car = cls.active_repository.create_from_dict(user)
         return cls.create_with_instance(car)
 
-    def __load_db_instance(self):
+    def load_db_instance(self):
         if self.db_instance is None:
             self.db_instance = self.active_repository.one_or_none(id=self.id)
 
@@ -116,7 +109,7 @@ class User(Actor, Aggregate):
         return note_updater.update(note_id, note_changes_dict)
 
     def update(self, payload):
-        self.__load_db_instance()
+        self.load_db_instance()
         payload.pop('password', None)
         payload['update_date'] = datetime.datetime.utcnow()
         self.db_instance.update_from_dict(payload)
@@ -124,10 +117,6 @@ class User(Actor, Aggregate):
     def change_avatar(self, files):
         avatar_changer = AvatarChanger(self)
         avatar_changer.change_avatar(files)
-
-    def share_a_note(self, note_id, user_id):
-        note_sharer = NoteSharer(self)
-        note_sharer.share(note_id, user_id)
 
     def as_dict(self, full=False):
         if full:

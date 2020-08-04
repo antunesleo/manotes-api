@@ -48,11 +48,3 @@ class ResidentsServiceCreateUserWithId(base.TestCase):
         note = services_locator.ResidentsService.create_user_with_id(1)
         user_class_mock.create_with_id.assert_called_with(1)
         self.assertEqual(note, user_mock)
-
-
-@base.TestCase.mock.patch('src.house.sharing.NoteSharing')
-class SharingServicePassMeTheNoteSharingFactory(base.TestCase):
-
-    def test_should_pass_me_the_class(self, note_sharing_mock):
-        user_class = services_locator.SharingService.pass_me_the_note_sharing_class()
-        self.assertEqual(user_class, note_sharing_mock)

@@ -12,8 +12,6 @@ class TestCase(unittest.TestCase):
         database.AppActiveRepository.db.create_all()
 
     def tearDown(self) -> None:
-        for note_sharing in models.NoteSharing.query.all():
-            note_sharing.delete_db()
         for note in models.Note.query.all():
             note.delete_db()
         for user in models.User.query.all():

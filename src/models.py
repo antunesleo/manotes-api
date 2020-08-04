@@ -100,13 +100,3 @@ class Note(db.Model, AbstractModel):
     content = db.Column(db.String)
     color = db.Column(db.String)
     shared = db.Column(db.Boolean, default=False)
-
-
-class NoteSharing(db.Model, AbstractModel):
-    __tablename__ = 'manotes_sharing_note'
-    id = db.Column(db.Integer, primary_key=True)
-    giver_id = db.Column('giver_id', db.Integer, db.ForeignKey('manotes_users.id'), nullable=False)
-    user_id = db.Column('user_id', db.Integer, db.ForeignKey('manotes_users.id'), nullable=False)
-    note_id = db.Column('note_id', db.Integer, db.ForeignKey('manotes_notes.id'), nullable=False)
-    creation_date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
-    update_date = db.Column(db.DateTime)

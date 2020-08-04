@@ -240,61 +240,6 @@ class NoteResource(ResourceBase):
                 return self.return_unexpected_error()
 
 
-class SharedNoteResource(ResourceBase):
-
-    def query(self):
-        return [self.response(shared_note) for shared_note in self.me.shared_notes]
-
-    @login_required
-    def get(self, note_id=None):
-        try:
-            if not note_id:
-                return self.query()
-        except Exception as ex:
-            return self.return_unexpected_error()
-
-    @not_allowed
-    def post(self, note_id):
-        pass
-
-    @not_allowed
-    def put(self, note_id):
-        pass
-
-    @not_allowed
-    def delete(self, note_id):
-        pass
-
-
-class NoteSharingResource(ResourceBase):
-
-    @not_allowed
-    def get(self, note_id):
-        pass
-
-    @login_required
-    def post(self, note_id):
-        try:
-            self.me.share_a_note(note_id, self.payload["user_id"])
-            return self.return_ok()
-        except exceptions.UserNotExists as ex:
-            return self.response({'result': 'not-found', 'error': 'Resource Not Found'}), 404
-        except exceptions.NoteNotFound as ex:
-            return self.return_not_found()
-        except exceptions.NoteNotMine as ex:
-            return self.return_not_mine()
-        except Exception as ex:
-            return self.return_unexpected_error()
-
-    @not_allowed
-    def put(self, note_id):
-        pass
-
-    @not_allowed
-    def delete(self, note_id):
-        pass
-
-
 class AvatarResource(ResourceBase):
 
     @not_allowed
