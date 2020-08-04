@@ -21,14 +21,6 @@ class CreateApiTest(base.TestCase):
                             for mock_call in api_instance_mock.add_resource.mock_calls))
 
     @base.mock.patch('src.api.Api')
-    def test_should_add_SharedNoteResource(self, api_mock):
-        api_instance_mock = self.mock.MagicMock()
-        api_mock.return_value = api_instance_mock
-        api.create_api(self.app_mock)
-        self.assertTrue(any(mock_call == base.call(api.resources.SharedNoteResource, '/api/users/me/shared_notes', '/api/users/me/shared_notes/<int:note_id>')
-                            for mock_call in api_instance_mock.add_resource.mock_calls))
-
-    @base.mock.patch('src.api.Api')
     def test_should_add_UserResource(self, api_mock):
         api_instance_mock = self.mock.MagicMock()
         api_mock.return_value = api_instance_mock

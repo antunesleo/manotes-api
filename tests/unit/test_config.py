@@ -168,28 +168,3 @@ class TestingConfigTest(base.TestCase):
 
     def test_has_ENVIRONMENT_default_test(self):
         self.assertEqual(self.config.ENVIRONMENT, 'test')
-
-
-class GetConfigTest(base.TestCase):
-
-    @base.mock.patch('src.config.import_module')
-    def test_should_call_import_module_to_import_config_module(self, import_module_mock):
-        config.get_config()
-        self.assertTrue(import_module_mock.called)
-
-    @base.mock.patch('src.config.import_module')
-    def test_should_raise_config_class_not_found_if_config_class_is_none(self, import_module_mock):
-        config_module_mock = self.mock.MagicMock()
-        config_module_mock.TestingConfig = None
-        import_module_mock.return_value = config_module_mock
-        with self.assertRaises(exceptions.ConfigClassNotFound):
-            config.get_config()
-
-    @base.mock.patch('src.config.import_module')
-    def test_should_return_config_class_if_config_class(self, import_module_mock):
-        config_module_mock = self.mock.MagicMock()
-        testing_config_mock = self.mock.MagicMock()
-        config_module_mock.TestingConfig = testing_config_mock
-        import_module_mock.return_value = config_module_mock
-        testing_config = config.get_config()
-        self.assertEqual(testing_config, testing_config_mock)
