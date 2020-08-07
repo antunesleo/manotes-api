@@ -1,0 +1,25 @@
+version: "2"
+
+        services:
+          postgres:
+            container_name: manotes-db
+            image: postgres:10.6
+            ports:
+              - "5432:5432"
+            env_file:
+              - .env.postgres
+            restart: unless-stopped
+            volumes:
+              - ./data:/var/lib/postgresql/data
+            networks:
+              - manotes-backend-network
+
+          web:
+            depends_on:
+              - postgres
+              - redis
+
+          celery:
+            depends_on:
+              - redis
+              - postgres
