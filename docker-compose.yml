@@ -9,7 +9,7 @@ services:
     volumes:
     - ./:/code
     env_file:
-      - .env
+      - .env.docker
     restart: unless-stopped
     command: >
         bash -c "python manage.py db upgrade &&
@@ -17,21 +17,7 @@ services:
     ports:
       - "5324:5324"
     depends_on:
-      - postgres
       - redis
-    networks:
-      - manotes-backend-network
-
-  postgres:
-    container_name: manotes-db
-    image: postgres:10.6
-    ports:
-      - "5432:5432"
-    env_file:
-      - .env.postgres
-    restart: unless-stopped
-    volumes:
-      - ./data:/var/lib/postgresql/data
     networks:
       - manotes-backend-network
 
@@ -51,12 +37,11 @@ services:
     volumes:
       - ./:/code
     env_file:
-      - .env
+      - .env.docker
     restart: unless-stopped
     command: celery -A src.initialize.worker worker --loglevel=DEBUG
     depends_on:
       - redis
-      - postgres
     networks:
       - manotes-backend-network
 
