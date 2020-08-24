@@ -18,15 +18,15 @@ class NoteService(ApplicationService):
         return note.as_dict()
 
     def delete(self, user_id, note_id):
-        note = HouseLocator.create_note_for_user(note_id, user_id)
+        note = self.__note_class.create_with_id(note_id, user_id)
         note.delete()
 
     def find(self, note_id, user_id):
-        note = HouseLocator.create_note_for_user(note_id, user_id)
+        note = self.__note_class.create_with_id(note_id, user_id)
         return note.as_dict()
 
     def update(self, user_id, note_id, note_changes_dict):
-        note = HouseLocator.create_note_for_user(note_id, user_id)
+        note = self.__note_class.create_with_id(note_id, user_id)
         note.update(note_changes_dict)
         return note.as_dict()
 
@@ -34,7 +34,7 @@ class NoteService(ApplicationService):
         return self.__note_class.list(user_id=user_id)
 
 
-class AvatarChanger(ApplicationService):
+class AvatarService(ApplicationService):
 
     def __init__(self, user):
         self.__user = user

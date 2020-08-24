@@ -1,6 +1,6 @@
 import datetime
 
-from src.house.application_services import AvatarChanger, NoteService
+from src.house.application_services import AvatarService, NoteService
 from src.base.domain import Actor, Aggregate
 from src import models, config as config_module
 
@@ -114,8 +114,8 @@ class User(Actor, Aggregate):
         self.db_instance.update_from_dict(payload)
 
     def change_avatar(self, files):
-        avatar_changer = AvatarChanger(self)
-        avatar_changer.change_avatar(files)
+        avatar_service = AvatarService(self)
+        avatar_service.change_avatar(files)
 
     def as_dict(self, full=False):
         if full:
