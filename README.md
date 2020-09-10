@@ -174,13 +174,34 @@ $ docker-compose up -d
 * [SQLAlchemy-Utils](https://pypi.org/project/SQLAlchemy-Utils/) - Various utility functions for SQLAlchemy.
 * [testtools](http://testtools.readthedocs.io/en/latest/for-test-authors.html) - testtools is a set of extensions to Python’s standard unittest module.
 
-## Authors
 
-* **Leonardo Antunes** - *Initial work* - [antunesleo](https://github.com/antunesleo)
-* **Pedro Pozzi Ferreira** - *Dockerization and Packages Update* - [PozziSan](https://github.com/PozziSan)
+## Contributors
 
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/antunesleo">
+        <img src="https://avatars0.githubusercontent.com/u/13929952?s=400&u=8c46ff05e5295aa7f085f5ec8aeddf5af6bc4677&v=4" width="100px;" alt=""/>
+        <br />
+        <sub>
+          <b>Leonardo Antunes</b>
+          <span> - Lead Development</span>
+        </sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/PozziSan">
+        <img src="https://avatars2.githubusercontent.com/u/22599880?s=400&u=14ef80f14c4e6dae753dc7e88a065e4e608c3c83&v=4" width="100px;" alt=""/>
+        <br />
+        <sub>
+          <b>Pedro Pozzi Ferreira</b>
+          <span> - Dockerization and Packages Update </span>
+        </sub>
+      </a>
+    </td>
+  </tr>
+</table>  
 
-See also the list of [contributors](https://github.com/antunesleo/manotes-api/contributors) who participated in this project.
 
 ## License
 
